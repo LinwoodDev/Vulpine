@@ -13,6 +13,9 @@
     "tray:default",
     "window:allow-set-title",
     "window:allow-minimize",
-    "window:allow-start-dragging"
+    "window:allow-start-dragging",
+    "window:allow-toggle-maximize",
+    "window:allow-close",
+    "window:allow-set-resizable"
   ]
 }

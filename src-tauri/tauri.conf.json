@@ -15,7 +15,9 @@
         "title": "Vulpine",
         "width": 800,
         "height": 600,
-        "decorations": false
+        "decorations": false,
+        "resizable": true,
+        "shadow": true
       }
     ],
     "security": {
