@@ -1,9 +1,10 @@
+use crate::{layouts::main::MainLayout, pages::home::HomePage};
 use leptos::leptos_dom::ev::SubmitEvent;
 use leptos::*;
+use leptos_router::*;
 use serde::{Deserialize, Serialize};
 use serde_wasm_bindgen::to_value;
 use wasm_bindgen::prelude::*;
-use crate::layouts::main::MainLayout;
 
 #[wasm_bindgen]
 extern "C" {
@@ -18,6 +19,20 @@ struct GreetArgs<'a> {
 
 #[component]
 pub fn App() -> impl IntoView {
+    view! {
+        <Router>
+        <MainLayout>
+        <Routes>
+            <Route path="" view={|| view! {<HomePage />}} />
+            <Route path="test" view=TestPage />
+        </Routes>
+        </MainLayout>
+        </Router>
+    }
+}
+
+#[component]
+pub fn TestPage() -> impl IntoView {
     let (name, set_name) = create_signal(String::new());
     let (greet_msg, set_greet_msg) = create_signal(String::new());
 
@@ -42,33 +57,32 @@ pub fn App() -> impl IntoView {
     };
 
     view! {
-        <main>
-            <div class="row">
-                <a href="https://tauri.app" target="_blank">
-                    <img src="public/tauri.svg" class="logo tauri" alt="Tauri logo"/>
-                </a>
-                <a href="https://docs.rs/leptos/" target="_blank">
-                    <img src="public/leptos.svg" class="logo leptos" alt="Leptos logo"/>
-                </a>
-            </div>
-            <p>"Click on the Tauri and Leptos logos to learn more."</p>
-            <p>
-                "Recommended IDE setup: "
-                <a href="https://code.visualstudio.com/" target="_blank">"VS Code"</a>
-                " + "
-                <a href="https://github.com/tauri-apps/tauri-vscode" target="_blank">"Tauri"</a>
-                " + "
-                <a href="https://github.com/rust-lang/rust-analyzer" target="_blank">"rust-analyzer"</a>
-            </p>
-            <form class="row" on:submit=greet>
-                <input
-                    id="greet-input"
-                    placeholder="Enter a name..."
-                    on:input=update_name
-                />
-                <button type="submit">"Greet"</button>
-            </form>
-            <p><b>{ move || greet_msg.get() }</b></p>
-        </main>
+        <a href="/" class="btn card primary">"Go back"</a>
+        <div class="row">
+            <a href="https://tauri.app" target="_blank">
+                <img src="public/tauri.svg" class="logo tauri" alt="Tauri logo"/>
+            </a>
+            <a href="https://docs.rs/leptos/" target="_blank">
+                <img src="public/leptos.svg" class="logo leptos" alt="Leptos logo"/>
+            </a>
+        </div>
+        <p>"Click on the Tauri and Leptos logos to learn more."</p>
+        <p>
+            "Recommended IDE setup: "
+            <a href="https://code.visualstudio.com/" target="_blank">"VS Code"</a>
+            " + "
+            <a href="https://github.com/tauri-apps/tauri-vscode" target="_blank">"Tauri"</a>
+            " + "
+            <a href="https://github.com/rust-lang/rust-analyzer" target="_blank">"rust-analyzer"</a>
+        </p>
+        <form class="row" on:submit=greet>
+            <input
+                id="greet-input"
+                placeholder="Enter a name..."
+                on:input=update_name
+            />
+            <button type="submit">"Greet"</button>
+        </form>
+        <p><b>{ move || greet_msg.get() }</b></p>
     }
 }

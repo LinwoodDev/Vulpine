@@ -1,0 +1,18 @@
+@use '../node_modules/@linwooddev/style/scss/main.scss';
+
+.sidebar-layout {
+  display: flex;
+  height: 100%;
+  gap: 4px;
+}
+@media (max-width: 600px) {
+  .sidebar-layout {
+    flex-direction: column;
+  }
+}
+
+@each $breakpoint, $value in main.$sizing {
+  .min-w-#{$breakpoint} {
+    min-width: $value;
+  }
+}
