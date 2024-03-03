@@ -1,4 +1,6 @@
 @use '../node_modules/@linwooddev/style/scss/main.scss';
+@use '../node_modules/@linwooddev/style/scss/colors';
+@use '../node_modules/@linwooddev/style/scss/vars';
 
 .no-decoration {
   text-decoration: none;
@@ -8,3 +10,35 @@
   font-weight: bold;
 }
 
+.normal-color {
+  color: main.$color-background-text;
+}
+
+.invert {
+  filter: invert(100%);
+}
+
+.icon {
+  width: 1.5em;
+  height: 1.5em;
+  display: block;
+}
+
+select {
+  border: 0;
+  padding: 8px;
+  margin: 4px 0;
+  border-radius: vars.$border-radius;
+  backdrop-filter: vars.$elevation-filter;
+  background-color: colors.$elevation;
+  color: colors.$background-text;
+  font-size: 1em;
+}
+
+option {
+  border: 0;
+  padding: 8px;
+  margin: 4px 0;
+  background-color: colors.$background;
+  color: colors.$background-text;
+}

@@ -24,6 +24,7 @@
 }
 body {
   overscroll-behavior: none;
+  container-type: inline-size;
 }
 main {
   overflow-y: auto;

@@ -4,10 +4,23 @@
   display: flex;
   height: 100%;
   gap: 4px;
+  flex-direction: column;
 }
-@media (max-width: 600px) {
+@container (min-width: 600px) {
   .sidebar-layout {
-    flex-direction: column;
+    flex-direction: row;
+  }
+}
+@each $breakpoint, $value in main.$breakpoints {
+  @container (max-width: #{$value}) {
+    .show-#{$breakpoint} {
+      display: none;
+    }
+  }
+}
+@each $breakpoint, $value in main.$breakpoints {
+  .show-#{$breakpoint} {
+    display: $value;
   }
 }
 

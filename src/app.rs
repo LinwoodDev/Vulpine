@@ -1,4 +1,4 @@
-use crate::{layouts::main::MainLayout, pages::home::HomePage};
+use crate::{layouts::main::MainLayout, pages::{home::*, settings::*}};
 use leptos::leptos_dom::ev::SubmitEvent;
 use leptos::*;
 use leptos_router::*;
@@ -9,7 +9,7 @@ use wasm_bindgen::prelude::*;
 #[wasm_bindgen]
 extern "C" {
     #[wasm_bindgen(js_namespace = ["window", "__TAURI__", "core"])]
-    async fn invoke(cmd: &str, args: JsValue) -> JsValue;
+    pub async fn invoke(cmd: &str, args: JsValue) -> JsValue;
 }
 
 #[derive(Serialize, Deserialize)]
@@ -24,6 +24,9 @@ pub fn App() -> impl IntoView {
         <MainLayout>
         <Routes>
             <Route path="" view={|| view! {<HomePage />}} />
+            <Route path="actions" view={|| view! {<HomePage action_id="".to_string() />}} />
+            <Route path="actions/:id" view=ActionPage />
+            <Route path="settings" view=SettingsPage />
             <Route path="test" view=TestPage />
         </Routes>
         </MainLayout>
