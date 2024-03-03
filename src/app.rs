@@ -24,8 +24,8 @@ pub fn App() -> impl IntoView {
         <MainLayout>
         <Routes>
             <Route path="" view={|| view! {<HomePage />}} />
-            <Route path="actions" view={|| view! {<HomePage action_id="".to_string() />}} />
-            <Route path="actions/:id" view=ActionPage />
+            <Route path="apps" view={|| view! {<HomePage app_id="".to_string() />}} />
+            <Route path="apps/:id" view=AppPage />
             <Route path="settings" view=SettingsPage />
             <Route path="test" view=TestPage />
         </Routes>

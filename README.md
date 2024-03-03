@@ -4,8 +4,8 @@
 
 ## Features
 
-* Create actions with a simple wizard
-* Run actions with a single click
-* Add input fields to actions
-* Share actions with others
+* Create apps with a simple wizard
+* Run apps with a single click
+* Add input fields to apps
+* Share apps with others
 * Cross platform on windows, linux and macos

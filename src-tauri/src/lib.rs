@@ -12,7 +12,7 @@ fn greet(name: &str) -> String {
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_shell::init())
-        .invoke_handler(tauri::generate_handler![greet,get_actions, create_action])
+        .invoke_handler(tauri::generate_handler![greet,get_apps, create_app, update_app])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

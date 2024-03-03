@@ -24,7 +24,7 @@
   display: block;
 }
 
-select {
+select, textarea {
   border: 0;
   padding: 8px;
   margin: 4px 0;
@@ -33,6 +33,10 @@ select {
   background-color: colors.$elevation;
   color: colors.$background-text;
   font-size: 1em;
+}
+
+.resize-vertical {
+  resize: vertical;
 }
 
 option {
