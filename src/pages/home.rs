@@ -1,9 +1,8 @@
 use leptos::{logging::log, *};
 use leptos_router::*;
-use serde_wasm_bindgen::{from_value, to_value};
 use shared::models::app::VulpineApp;
 
-use crate::{invoke, utils::signal::create_initial_rw_signal};
+use crate::utils::signal::create_initial_rw_signal;
 
 #[component]
 pub fn AppPage() -> impl IntoView {
@@ -16,48 +15,50 @@ pub fn AppPage() -> impl IntoView {
 #[component]
 pub fn HomePage(#[prop(optional, into)] app_id: MaybeProp<String>) -> impl IntoView {
     let cloned_id = app_id.clone();
-    let only_large = create_memo(move |_| cloned_id.get().is_none());
     view! {
         <div class="sidebar-layout">
-            <HomeListView only_large={only_large} />
-            <HomeDetailsView id={app_id} />
+            <HomeListView id={app_id} />
+            <HomeDetailsView id={cloned_id} />
         </div>
     }
 }
 
 #[component]
-fn HomeListView(#[prop(optional, into)] only_large: MaybeSignal<bool>) -> impl IntoView {
+fn HomeListView(#[prop(optional_no_strip, into)] id: MaybeProp<String>) -> impl IntoView {
     const ITEMS: [&str; 3] = ["Item 1", "Item 2", "Item 3"];
+    let stored_id = store_value(id);
+    let show = move || stored_id.get_value().get().is_some();
     view! {
-        <ul class="col min-w-md gap-xs mh-xs" class:show_xs={only_large}>
+        <ul class="col min-w-md gap-xs mh-xs" class:show-sm={show}>
             <li class="row justify-between align-center ph-xs">
-                <h2 class="bold"><a href="/" class="no-decoration normal-color">Actions</a></h2>
+                <h2 class="bold"><a href="/" class="no-decoration normal-color">Apps</a></h2>
                 <div class="row gap-xs">
                     <a href="/apps" class="btn secondary p-xs"><img class="invert icon" title="Add" src="public/icons/plus-light.svg" alt="Plus icon"/></a>
                     <a href="/settings" class="btn secondary p-xs"><img class="invert icon" title="Settings" src="public/icons/gear-light.svg" alt="Gear icon"/></a>
                 </div>
             </li>
-            { ITEMS.iter().map(|item| view! { <a class="card primary no-decoration bold" href={format!("/apps/{}", item)}><li>{item.to_string()}</li></a> }).collect_view() }
+            { ITEMS.iter().map(move |item| {
+                let is_active = move || stored_id.get_value().get().map_or(false, |id| id == *item);
+                view! { <a class="card primary no-decoration bold" class:paper=is_active href={format!("/apps/{}", item)}><li>{item.to_string()}</li></a> }
+            }).collect_view() }
         </ul>
     }
 }
 
 #[component]
 fn HomeDetailsView(#[prop(optional_no_strip, into)] id: MaybeProp<String>) -> impl IntoView {
-    let cloned_id = id.clone();
-    let show = move || cloned_id.get().is_none();
-    let cloned_id = id.clone();
+    let stored_id = store_value(id);
+    let show = move || stored_id.get_value().get().is_none();
     let title = move || {
-        let id = cloned_id.clone().get().unwrap_or_default();
+        let id = stored_id.get_value().get().unwrap_or_default();
         if id.is_empty() {
             "Add".to_string()
         } else {
             "Edit".to_string()
         }
     };
-    let cloned_id = id.clone();
     let fetched = create_local_resource(
-        move || cloned_id.get(),
+        move || stored_id.get_value().get(),
         |id| async {
             let Some(id) = id else {
                 return None;
@@ -74,18 +75,17 @@ fn HomeDetailsView(#[prop(optional_no_strip, into)] id: MaybeProp<String>) -> im
             //Some(app)
         },
     );
-    let cloned_id = id.clone();
-    let initial_current_id = create_memo(move |_| cloned_id.get().unwrap_or_default());
+    let initial_current_id = create_memo(move |_| stored_id.get_value().get().unwrap_or_default());
     let current_id = create_initial_rw_signal(initial_current_id);
     let app = create_rw_signal(VulpineApp::default());
     create_effect(move |_| {
         app.set(fetched.get().flatten().unwrap_or_default());
     });
-    let cloned_id = id.clone();
     view! {
-        <div class="col card paper flex ph-sm min-w-md h-full overflow-y" class:show-xs={move || cloned_id.get().is_some()}>
+        <div class="col card paper flex ph-sm min-w-md h-full overflow-y" class:show-sm={move || stored_id.get_value().get().is_none()}>
         <Show when={move || !show()}>
             <div class="row align-center gap-sm">
+                <a href="/" class="btn secondary p-xs hide-sm"><img class="invert icon" title="Home" src="public/icons/house-light.svg" alt="House icon"/></a>
                 <h2 class="bold">
                     {title()}
                 </h2>
@@ -94,7 +94,7 @@ fn HomeDetailsView(#[prop(optional_no_strip, into)] id: MaybeProp<String>) -> im
             </div>
         </Show>
         <div class="flex col justify-center">
-        {move || match id.clone().get() {
+        {move || match stored_id.get_value().get() {
             Some(_) => view!{
                 <AppDetailsView app={app} />
             }.into_view(),
