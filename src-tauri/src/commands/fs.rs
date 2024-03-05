@@ -71,6 +71,25 @@ pub fn update_app(app_handle: tauri::AppHandle, name: String, app: VulpineApp, c
     true
 }
 
+#[tauri::command]
+pub fn delete_app(app_handle: tauri::AppHandle, name: String) -> bool {
+    let Ok(apps_dir) = get_apps_directory(&app_handle) else {
+        return false;
+    };
+    let file_name = safe_filename(&name);
+    if file_name.is_empty() {
+        return false;
+    }
+    let app_dir = apps_dir.join(file_name);
+    if !app_dir.exists() {
+        return false;
+    }
+    let Ok(_) = fs::remove_dir_all(app_dir) else {
+        return false;
+    };
+    true
+}
+
 const ALLOWED_SPECIAL_CHARS: &str = "_- ";
 
 pub fn safe_filename(name: &str) -> String {

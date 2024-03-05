@@ -24,7 +24,7 @@ pub fn SettingsPage() -> impl IntoView {
                     </div>
                     <div class="form-group justify-between">
                         <label for="native-titlebar">"Native titlebar"</label>
-                        <input type="checkbox" id="native-titlebar" />
+                        <input type="checkbox" id="native-titlebar" checked="checked" />
                     </div>
                 </div>
             </div>

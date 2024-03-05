@@ -45,3 +45,14 @@ pub async fn get_app(name: String) -> Option<VulpineApp> {
     };
     app
 }
+
+pub async fn delete_app(name: String) -> bool {
+    let result = invoke("delete_app", to_value(&GetAppArgs {
+        name,
+    }).unwrap()).await;
+    let Ok(app) = from_value::<bool>(result) else {
+        return false;
+    };
+    app
+}
+

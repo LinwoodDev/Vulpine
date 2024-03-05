@@ -53,6 +53,7 @@ fn HomeListView(#[prop(optional_no_strip, into)] id: MaybeProp<String>) -> impl 
 
 #[component]
 fn HomeDetailsView(#[prop(optional_no_strip, into)] id: MaybeProp<String>) -> impl IntoView {
+    let navigate = store_value(use_navigate());
     let stored_id = store_value(id);
     let show = move || stored_id.get_value().get().is_none();
     let is_adding = move || stored_id.get_value().get().unwrap_or_default().is_empty();
@@ -87,6 +88,14 @@ fn HomeDetailsView(#[prop(optional_no_strip, into)] id: MaybeProp<String>) -> im
             }
         });
     };
+    let on_delete = move |_| {
+        spawn_local(async move {
+            let id = current_id.get_untracked();
+            if delete_app(id).await {
+                navigate.get_value()("", Default::default());
+            }
+        });
+    };
     view! {
         <div class="col card paper flex ph-sm min-w-md h-full overflow-y" class:show-sm={move || stored_id.get_value().get().is_none()}>
         <Show when={move || !show()}>
@@ -97,6 +106,9 @@ fn HomeDetailsView(#[prop(optional_no_strip, into)] id: MaybeProp<String>) -> im
                 </h2>
                 <input type="text" class="flex" readonly={move || !is_adding()} prop:value={move || current_id.get()} on:input={move |ev| current_id.set(event_target_value(&ev))} />
                 <button class="btn primary" disabled={move || fetched.get().flatten().map_or(false, |f| app.get() == f)} on:click=on_save>"Save"</button>
+                <Show when={move || !is_adding()}>
+                    <button class="btn secondary" on:click=on_delete><img class="invert icon" title="Delete" src="/public/icons/trash-light.svg" alt="Trash icon"/></button>
+                </Show>
             </div>
         </Show>
         <div class="flex col justify-center">
