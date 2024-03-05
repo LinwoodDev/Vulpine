@@ -4,13 +4,6 @@ use leptos::*;
 use leptos_router::*;
 use serde::{Deserialize, Serialize};
 use serde_wasm_bindgen::to_value;
-use wasm_bindgen::prelude::*;
-
-#[wasm_bindgen]
-extern "C" {
-    #[wasm_bindgen(js_namespace = ["window", "__TAURI__", "core"])]
-    pub async fn invoke(cmd: &str, args: JsValue) -> JsValue;
-}
 
 #[derive(Serialize, Deserialize)]
 struct GreetArgs<'a> {

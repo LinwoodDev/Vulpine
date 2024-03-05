@@ -2,7 +2,7 @@ use leptos::{logging::log, *};
 use leptos_router::*;
 use shared::models::app::VulpineApp;
 
-use crate::utils::signal::create_initial_rw_signal;
+use crate::{api::fs::*, utils::signal::create_initial_rw_signal};
 
 #[component]
 pub fn AppPage() -> impl IntoView {
@@ -25,7 +25,7 @@ pub fn HomePage(#[prop(optional, into)] app_id: MaybeProp<String>) -> impl IntoV
 
 #[component]
 fn HomeListView(#[prop(optional_no_strip, into)] id: MaybeProp<String>) -> impl IntoView {
-    const ITEMS: [&str; 3] = ["Item 1", "Item 2", "Item 3"];
+    let items = create_resource(|| (), |_| get_apps());
     let stored_id = store_value(id);
     let show = move || stored_id.get_value().get().is_some();
     view! {
@@ -33,14 +33,20 @@ fn HomeListView(#[prop(optional_no_strip, into)] id: MaybeProp<String>) -> impl 
             <li class="row justify-between align-center ph-xs">
                 <h2 class="bold"><a href="/" class="no-decoration normal-color">Apps</a></h2>
                 <div class="row gap-xs">
-                    <a href="/apps" class="btn secondary p-xs"><img class="invert icon" title="Add" src="public/icons/plus-light.svg" alt="Plus icon"/></a>
-                    <a href="/settings" class="btn secondary p-xs"><img class="invert icon" title="Settings" src="public/icons/gear-light.svg" alt="Gear icon"/></a>
+                    <a href="/apps" class="btn secondary p-xs"><img class="invert icon" src="/public/icons/plus-light.svg" alt="Plus icon"/></a>
+                    <a href="/settings" class="btn secondary p-xs"><img class="invert icon" title="Settings" src="/public/icons/gear-light.svg" alt="Gear icon"/></a>
                 </div>
             </li>
-            { ITEMS.iter().map(move |item| {
-                let is_active = move || stored_id.get_value().get().map_or(false, |id| id == *item);
-                view! { <a class="card primary no-decoration bold" class:paper=is_active href={format!("/apps/{}", item)}><li>{item.to_string()}</li></a> }
-            }).collect_view() }
+            {move || match items.get() {
+                None => view! { <p>"Loading..."</p> }.into_view(),
+                Some(items) => {
+                    items.iter().map(|item| {
+                        let cloned = item.clone();
+                        let is_active = move || stored_id.get_value().get().map_or(false, |id| id == *cloned);
+                        view! { <a class="card primary no-decoration bold" class:paper=is_active href={format!("/apps/{}", &item)}><li>{item.to_string()}</li></a> }
+                    }).collect_view()
+                },
+             }}
         </ul>
     }
 }
@@ -49,9 +55,9 @@ fn HomeListView(#[prop(optional_no_strip, into)] id: MaybeProp<String>) -> impl 
 fn HomeDetailsView(#[prop(optional_no_strip, into)] id: MaybeProp<String>) -> impl IntoView {
     let stored_id = store_value(id);
     let show = move || stored_id.get_value().get().is_none();
+    let is_adding = move || stored_id.get_value().get().unwrap_or_default().is_empty();
     let title = move || {
-        let id = stored_id.get_value().get().unwrap_or_default();
-        if id.is_empty() {
+        if is_adding() {
             "Add".to_string()
         } else {
             "Edit".to_string()
@@ -63,16 +69,7 @@ fn HomeDetailsView(#[prop(optional_no_strip, into)] id: MaybeProp<String>) -> im
             let Some(id) = id else {
                 return None;
             };
-            log!("fetching app: {}", id);
-            //if id.is_empty() {
-            return Some(VulpineApp::default());
-            //};
-            //let args = to_value(&id).unwrap();
-            //let response = invoke("get_app", args).await;
-            //let Ok(app) = from_value(response) else {
-            //    return None;
-            //};
-            //Some(app)
+            get_app(id).await
         },
     );
     let initial_current_id = create_memo(move |_| stored_id.get_value().get().unwrap_or_default());
@@ -81,16 +78,25 @@ fn HomeDetailsView(#[prop(optional_no_strip, into)] id: MaybeProp<String>) -> im
     create_effect(move |_| {
         app.set(fetched.get().flatten().unwrap_or_default());
     });
+    let on_save = move |_| {
+        spawn_local(async move {
+            let current_id = current_id.get_untracked();
+            let app = app.get_untracked();
+            if update_app(current_id, app.clone(), stored_id.get_value().get_untracked().unwrap_or_default().is_empty()).await {
+                fetched.try_update(|_| Some(app));
+            }
+        });
+    };
     view! {
         <div class="col card paper flex ph-sm min-w-md h-full overflow-y" class:show-sm={move || stored_id.get_value().get().is_none()}>
         <Show when={move || !show()}>
             <div class="row align-center gap-sm">
-                <a href="/" class="btn secondary p-xs hide-sm"><img class="invert icon" title="Home" src="public/icons/house-light.svg" alt="House icon"/></a>
+                <a href="/" class="btn secondary p-xs hide-sm"><img class="invert icon" title="Home" src="/public/icons/house-light.svg" alt="House icon"/></a>
                 <h2 class="bold">
                     {title()}
                 </h2>
-                <input type="text" class="flex" prop:value={move || current_id.get()} on:input={move |ev| current_id.set(event_target_value(&ev))} />
-                <button class="btn primary">"Save"</button>
+                <input type="text" class="flex" readonly={move || !is_adding()} prop:value={move || current_id.get()} on:input={move |ev| current_id.set(event_target_value(&ev))} />
+                <button class="btn primary" disabled={move || fetched.get().flatten().map_or(false, |f| app.get() == f)} on:click=on_save>"Save"</button>
             </div>
         </Show>
         <div class="flex col justify-center">
