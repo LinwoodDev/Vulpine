@@ -13,13 +13,14 @@ pub fn get_apps(app_handle: tauri::AppHandle) -> Vec<String> {
         return Vec::new();
     };
     // Return all folders that include a app.toml file
-    app_dir
+    let found = app_dir
         .filter_map(|entry| entry.ok())
         .map(|entry| entry.path())
         .filter(|path| path.is_dir())
         .filter(|path| path.join("app.toml").exists())
         .filter_map(|path| path.file_name().map(|name| name.to_string_lossy().to_string()))
-        .collect()
+        .collect();
+    found
 }
 
 #[tauri::command]
@@ -54,6 +55,7 @@ pub fn update_app(app_handle: tauri::AppHandle, name: String, app: VulpineApp, c
     if file_name.is_empty() {
         return false;
     }
+    println!("Updating app: {:?}", app);
     let app_dir = apps_dir.join(file_name);
     let app_file = app_dir.join("app.toml");
     let Ok(app_toml) = toml::to_string_pretty(&app) else {
@@ -65,7 +67,7 @@ pub fn update_app(app_handle: tauri::AppHandle, name: String, app: VulpineApp, c
     if fs::create_dir_all(app_dir).is_err() {
         return false;
     }
-    let Ok(_) = fs::write(app_file, app_toml) else {
+    if fs::write(app_file, app_toml).is_err() {
         return false;
     };
     true

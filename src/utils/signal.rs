@@ -1,6 +1,6 @@
-use leptos::*;
+/* use leptos::*;
 
-/* pub fn create_initial_signal<T>(
+pub fn create_initial_signal<T>(
     initial: impl SignalGet<Value = T> + SignalGetUntracked<Value = T> + 'static,
 ) -> (ReadSignal<T>, WriteSignal<T>)
 where
@@ -12,7 +12,7 @@ where
         setter.set(initial.get());
     });
     (getter, setter)
-} */
+} 
 
 pub fn create_initial_rw_signal<T>(
     initial: impl SignalGet<Value = T> + SignalGetUntracked<Value = T> + 'static,
@@ -26,4 +26,4 @@ where
         signal.set(initial.get());
     });
     signal
-}
+} */

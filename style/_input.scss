@@ -46,7 +46,7 @@ button, .btn {
   }
 }
 
-input[type=text]:read-only, input[type=number]:read-only {
+input[type=text]:read-only, input[type=number]:read-only, textarea:read-only {
   cursor: not-allowed;
   pointer-events: none;
   background-color: colors.$background;

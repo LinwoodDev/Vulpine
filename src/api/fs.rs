@@ -4,12 +4,16 @@ use shared::models::app::VulpineApp;
 
 use super::{invoke, invoke_no_args};
 
+#[derive(Serialize, Deserialize)]
+struct Output<T> {
+    pub id: i8,
+    pub message: T,
+}
+
 pub async fn get_apps() -> Vec<String> {
     let result = invoke_no_args("get_apps").await;
-    let Ok(apps) = from_value::<Vec<String>>(result) else {
-        return Vec::new();
-    };
-    apps
+    let output = from_value::<Output<Vec<String>>>(result).unwrap();
+    output.message
 }
 
 #[derive(Serialize, Deserialize)]
@@ -25,10 +29,7 @@ pub async fn update_app(name : String, app: VulpineApp, create: bool) -> bool {
         app,
         create,
     }).unwrap()).await;
-    let Ok(apps) = from_value::<bool>(result) else {
-        return false;
-    };
-    apps
+    from_value::<bool>(result).unwrap()
 }
 
 #[derive(Serialize, Deserialize)]
@@ -40,10 +41,8 @@ pub async fn get_app(name: String) -> Option<VulpineApp> {
     let result = invoke("get_app", to_value(&GetAppArgs {
         name,
     }).unwrap()).await;
-    let Ok(app) = from_value::<Option<VulpineApp>>(result) else {
-        return None;
-    };
-    app
+    let output = from_value::<Output<Option<VulpineApp>>>(result).unwrap();
+    output.message
 }
 
 pub async fn delete_app(name: String) -> bool {
