@@ -9,8 +9,8 @@ dependencies:
     specifier: ^1.6.3
     version: 1.6.3
   '@linwooddev/style':
-    specifier: ^0.2.5
-    version: 0.2.5
+    specifier: ^0.3.1
+    version: 0.3.1
   sass:
     specifier: ^1.71.1
     version: 1.71.1
@@ -34,8 +34,8 @@ packages:
     resolution: {integrity: sha512-9TANp6GPoMtYzQdt54kfAyMmz1+osLlXdg2ENroU7zzrtflTLrrC/lgrIfaSe+Wu0b89GKccT7vxXA0MoAIO+Q==}
     dev: false
 
-  /@linwooddev/style@0.2.5:
-    resolution: {integrity: sha512-MChOtFEJGzPhrcZ3XL2kt+pUeDYsTPdO8Le+NHiczcpT/C9EIKU92FCb9EPlXr7BFYglwgeU3Cwniv3QPaUfsg==}
+  /@linwooddev/style@0.3.1:
+    resolution: {integrity: sha512-bkwf9KDJ/F8xwN6RYGy8KeHFmCA5aJzJSQXq1W0QpGv8/SMaTFlTtg5hHUvwLMkNwPtYX4URIbQu2exMR+EAbg==}
     dev: false
 
   /anymatch@3.1.3:

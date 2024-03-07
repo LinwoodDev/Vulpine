@@ -1,3 +1,4 @@
+use leptos::logging::{error, log};
 use serde::{Deserialize, Serialize};
 use serde_wasm_bindgen::{from_value, to_value};
 use shared::models::app::VulpineApp;
@@ -41,7 +42,10 @@ pub async fn get_app(name: String) -> Option<VulpineApp> {
     let result = invoke("get_app", to_value(&GetAppArgs {
         name,
     }).unwrap()).await;
-    let output = from_value::<Output<Option<VulpineApp>>>(result).unwrap();
+    let Ok(output) = from_value::<Output<Option<VulpineApp>>>(result.clone()) else {
+        error!("Failed to get app {:?}", result);
+        return None;
+    };
     output.message
 }
 

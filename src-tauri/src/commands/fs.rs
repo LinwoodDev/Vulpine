@@ -1,6 +1,6 @@
 use std::{fs, path::PathBuf};
 
-use shared::models::app::VulpineApp;
+use shared::models::{app::VulpineApp, config::VulpineAppConfig};
 use tauri::Manager;
 
 
@@ -25,14 +25,9 @@ pub fn get_apps(app_handle: tauri::AppHandle) -> Vec<String> {
 
 #[tauri::command]
 pub fn get_app(app_handle: tauri::AppHandle, name: String) -> Option<VulpineApp> {
-    let Ok(apps_dir) = get_apps_directory(&app_handle) else {
+    let Some(app_dir) = get_app_directory(&app_handle, &name) else {
         return None;
     };
-    let file_name = safe_filename(&name);
-    if file_name.is_empty() {
-        return None;
-    }
-    let app_dir = apps_dir.join(file_name);
     let app_file = app_dir.join("app.toml");
     if !app_file.exists() {
         return None;
@@ -75,18 +70,46 @@ pub fn update_app(app_handle: tauri::AppHandle, name: String, app: VulpineApp, c
 
 #[tauri::command]
 pub fn delete_app(app_handle: tauri::AppHandle, name: String) -> bool {
-    let Ok(apps_dir) = get_apps_directory(&app_handle) else {
+    let Some(app_dir) = get_app_directory(&app_handle, &name) else {
         return false;
     };
-    let file_name = safe_filename(&name);
-    if file_name.is_empty() {
-        return false;
-    }
-    let app_dir = apps_dir.join(file_name);
     if !app_dir.exists() {
         return false;
     }
     let Ok(_) = fs::remove_dir_all(app_dir) else {
+        return false;
+    };
+    true
+}
+
+#[tauri::command]
+pub fn get_config(app_handle: tauri::AppHandle, name: String) -> Option<VulpineAppConfig> {
+    let Some(app_dir) = get_app_directory(&app_handle, &name) else {
+        return None;
+    };
+    let config_file = app_dir.join("config.toml");
+    if !config_file.exists() {
+        return None;
+    }
+    let Ok(app_toml) = fs::read_to_string(config_file) else {
+        return None;
+    };
+    let Ok(app) = toml::from_str(&app_toml) else {
+        return None;
+    };
+    Some(app)
+}
+
+#[tauri::command]
+pub fn update_config(app_handle: tauri::AppHandle, name: String, config: VulpineAppConfig) -> bool {
+    let Some(app_dir) = get_app_directory(&app_handle, &name) else {
+        return false;
+    };
+    let config_file = app_dir.join("config.toml");
+    let Ok(app_toml) = toml::to_string_pretty(&config) else {
+        return false;
+    };
+    if fs::write(config_file, app_toml).is_err() {
         return false;
     };
     true
@@ -108,4 +131,15 @@ pub fn get_apps_directory(app_handle: &tauri::AppHandle) -> tauri::Result<PathBu
         let _ = fs::create_dir_all(path);
     }
     path
+}
+
+pub fn get_app_directory(app_handle: &tauri::AppHandle, name: &str) -> Option<PathBuf> {
+    let Ok(apps_dir) = get_apps_directory(app_handle) else {
+        return None;
+    };
+    let file_name = safe_filename(name);
+    if file_name.is_empty() {
+        return None;
+    }
+    Some(apps_dir.join(file_name))
 }

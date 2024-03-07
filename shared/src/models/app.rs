@@ -8,16 +8,34 @@ pub struct VulpineApp {
     pub description: String,
     pub version: String,
     pub actions: BTreeMap<String, VulpineAction>,
+    pub executables: HashMap<String, VulpineExecutable>,
+}
+
+#[derive(Debug, Serialize, Deserialize, Default, Clone, PartialEq)]
+pub struct VulpineExecutable {
+    pub description: String,
+}
+
+#[derive(Debug, Serialize, Deserialize, Default, Clone, PartialEq)]
+pub struct VulpineDownload {
+    pub url: String,
+    pub sha256: Option<String>,
+}
+
+#[derive(Debug, Serialize, Deserialize, Default, Clone, PartialEq)]
+pub struct VulpineCommand {
+    executable: String,
+    #[serde(default)]
+    inputs: HashMap<String, ActionInput>,
+    #[serde(default)]
+    args: Vec<HashMap<String, ValueMapping>>,
+    #[serde(default)]
+    env: HashMap<String, ValueMapping>,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 pub enum VulpineAction {
-    Command {
-        executable: String,
-        inputs: HashMap<String, ActionInput>,
-        args: Vec<HashMap<String, ValueMapping>>,
-        env: HashMap<String, ValueMapping>,
-    }
+    Command(VulpineCommand),
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
