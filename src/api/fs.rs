@@ -1,4 +1,4 @@
-use leptos::logging::{error, log};
+use leptos::logging::error;
 use serde::{Deserialize, Serialize};
 use serde_wasm_bindgen::{from_value, to_value};
 use shared::models::app::VulpineApp;
@@ -13,8 +13,11 @@ struct Output<T> {
 
 pub async fn get_apps() -> Vec<String> {
     let result = invoke_no_args("get_apps").await;
-    let output = from_value::<Output<Vec<String>>>(result).unwrap();
-    output.message
+    let Ok(output) = from_value::<Vec<String>>(result.clone()) else {
+        error!("Failed to get apps. Result: {:?}", result);
+        return Vec::new();
+    };
+    output
 }
 
 #[derive(Serialize, Deserialize)]
@@ -30,7 +33,11 @@ pub async fn update_app(name : String, app: VulpineApp, create: bool) -> bool {
         app,
         create,
     }).unwrap()).await;
-    from_value::<bool>(result).unwrap()
+    let Ok(result) = from_value::<bool>(result.clone()) else {
+        error!("Failed to update app {:?}", result);
+        return false;
+    };
+    result
 }
 
 #[derive(Serialize, Deserialize)]
@@ -42,11 +49,11 @@ pub async fn get_app(name: String) -> Option<VulpineApp> {
     let result = invoke("get_app", to_value(&GetAppArgs {
         name,
     }).unwrap()).await;
-    let Ok(output) = from_value::<Output<Option<VulpineApp>>>(result.clone()) else {
+    let Ok(output) = from_value::<Option<VulpineApp>>(result.clone()) else {
         error!("Failed to get app {:?}", result);
         return None;
     };
-    output.message
+    output
 }
 
 pub async fn delete_app(name: String) -> bool {

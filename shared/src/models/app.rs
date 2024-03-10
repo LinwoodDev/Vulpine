@@ -22,20 +22,20 @@ pub struct VulpineDownload {
     pub sha256: Option<String>,
 }
 
-#[derive(Debug, Serialize, Deserialize, Default, Clone, PartialEq)]
-pub struct VulpineCommand {
-    executable: String,
-    #[serde(default)]
-    inputs: HashMap<String, ActionInput>,
-    #[serde(default)]
-    args: Vec<HashMap<String, ValueMapping>>,
-    #[serde(default)]
-    env: HashMap<String, ValueMapping>,
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+pub enum VulpineStep {
+    Command {
+        executable: String,
+        args: Vec<HashMap<String, ValueMapping>>,
+        env: HashMap<String, ValueMapping>,
+    }
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
-pub enum VulpineAction {
-    Command(VulpineCommand),
+#[derive(Debug, Serialize, Deserialize, Default, Clone, PartialEq)]
+pub struct VulpineAction {
+    pub description: String,
+    pub inputs: HashMap<String, ActionInput>,
+    pub steps: Vec<VulpineStep>,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]

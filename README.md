@@ -18,6 +18,7 @@ Install rust and pnpm first.
 Then install the dependencies of tauri. Click [here](https://beta.tauri.app/guides/prerequisites/) for more information.
 
 ```bash
+rustup target add wasm32-unknown-unknown
 cargo install tauri-cli --version "^2.0.0-beta" --locked
 cargo install trunk
 pnpm install

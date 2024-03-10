@@ -12,15 +12,7 @@
     flex-direction: row;
   }
 }
-@each $breakpoint, $value in main.$breakpoints {
-  @container (max-width: #{$value}) {
-    .show-#{$breakpoint} {
-      display: none;
-    }
-  }
-  @container (min-width: #{$value}) {
-    .hide-#{$breakpoint} {
-      display: none;
-    }
-  }
+
+.min-w-max {
+  min-width: max-content;
 }
