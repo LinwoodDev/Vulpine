@@ -3,8 +3,9 @@ pub mod details;
 
 use leptos::*;
 use leptos_router::*;
+use shared::models::app::VulpineApp;
 
-use crate::api::fs::*;
+use crate::{api::fs::*, components::dialog::Dialog};
 use details::*;
 
 #[component]
@@ -31,12 +32,39 @@ fn HomeListView(#[prop(optional_no_strip, into)] id: MaybeProp<String>) -> impl 
     let items = create_resource(|| (), |_| get_apps());
     let stored_id = store_value(id);
     let show = move || stored_id.get_value().get().is_some();
+    let show_add = create_rw_signal(false);
+    let add_name = create_rw_signal(String::new());
+    let navigate = store_value(use_navigate());
+    let on_app_add = move |_| {
+        let name = add_name.get_untracked();
+        if name.is_empty() {
+            return;
+        }
+        spawn_local(async move {
+            let result = update_app(name.to_string(), VulpineApp::default(), true).await;
+            if result {
+                navigate.get_value()(&format!("/apps/{}", name), Default::default());
+            }
+        });
+    };
     view! {
+        <Dialog title="Add app" show={show_add} on_close={move |_| show_add.set(false)}>
+            <form method="dialog">
+                <div class="form-group">
+                    <label for="name">"Name"</label>
+                    <input type="text" id="name" prop:value={add_name} on:input={move |ev| add_name.set(event_target_value(&ev))} />
+                </div>
+                <div class="row justify-end gap-xs mt-md">
+                    <button class="btn secondary" on:click=on_app_add>"Cancel"</button>
+                    <button class="btn primary" on:click=on_app_add>"Add"</button>
+                </div>
+            </form>
+        </Dialog>
         <ul class="col min-w-md gap-xs mh-xs" class:show-sm={show}>
             <li class="row justify-between align-center ph-xs">
                 <h2 class="bold"><a href="/" class="no-decoration normal-color">Apps</a></h2>
                 <div class="row gap-xs">
-                    <a href="/apps" class="btn secondary p-xs"><img class="invert icon" src="/public/icons/plus-light.svg" alt="Plus icon"/></a>
+                    <button on:click={move |_| show_add.set(true)} class="btn secondary p-xs"><img class="invert icon" src="/public/icons/plus-light.svg" alt="Plus icon"/></button>
                     <a href="/settings" class="btn secondary p-xs"><img class="invert icon" title="Settings" src="/public/icons/gear-light.svg" alt="Gear icon"/></a>
                 </div>
             </li>

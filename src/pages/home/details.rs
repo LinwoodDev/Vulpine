@@ -9,18 +9,8 @@ pub fn HomeDetailsView(#[prop(optional_no_strip, into)] id: MaybeProp<String>) -
     let navigate = store_value(use_navigate());
     let stored_id = store_value(id);
     let show = move || stored_id.get_value().get().is_none();
-    let is_adding = move || stored_id.get_value().get().unwrap_or_default().is_empty();
     let current_id = create_rw_signal(None);
-    let is_editing = create_memo(move |_| current_id.get().is_some() || is_adding());
-    let title = move || {
-        if is_adding() {
-            "Add".to_string()
-        } else if is_editing.get() {
-            "Edit".to_string()
-        } else {
-            "Details".to_string()
-        }
-    };
+    let is_editing: Memo<bool> = create_memo(move |_| current_id.get().is_some());
     let fetched = create_local_resource(
         move || stored_id.get_value().get(),
         |id| async {
@@ -66,16 +56,15 @@ pub fn HomeDetailsView(#[prop(optional_no_strip, into)] id: MaybeProp<String>) -
         });
     };
     view! {
-        <div class="col card paper flex ph-sm min-w-md h-full overflow-y" class:show-sm={move || stored_id.get_value().get().is_none()}>
+        <div class="col card paper flex min-w-md h-full overflow-y" class:show-sm={move || stored_id.get_value().get().is_none()}>
             <Show when={move || !show()}>
-                <div class="row align-center gap-sm">
+                <div class="row align-center gap-sm card paper pv-xs ph-md">
                     <a href="/" class="btn secondary p-xs hide-sm"><img class="invert icon" title="Home" src="/public/icons/house-light.svg" alt="House icon"/></a>
-                    <h2 class="bold">
-                        {title()}
+                    <h2 class="row flex">
+                        {move || current_id.get().or(stored_id.get_value().get()).unwrap_or_default()}
                     </h2>
-                    <input type="text" class="flex" readonly={move || !is_adding()} prop:value={move || current_id.get().or(stored_id.get_value().get()).unwrap_or_default()} on:input={move |ev| current_id.set(Some(event_target_value(&ev)))} />
                     <button class="btn primary" on:click=on_edit>
-                        {move || if current_id.get().is_some() || is_adding() {
+                        {move || if current_id.get().is_some() {
                             view! {
                                 <img class="invert icon" title="Save" src="/public/icons/floppy-disk-light.svg" alt="Floppy disk icon"/>
                             }.into_view()
@@ -85,12 +74,10 @@ pub fn HomeDetailsView(#[prop(optional_no_strip, into)] id: MaybeProp<String>) -
                             }.into_view()
                         }}
                     </button>
-                    <Show when={move || !is_adding()}>
-                        <button class="btn secondary" on:click=on_delete><img class="invert icon" title="Delete" src="/public/icons/trash-light.svg" alt="Trash icon"/></button>
-                    </Show>
+                    <button class="btn secondary" on:click=on_delete><img class="invert icon" title="Delete" src="/public/icons/trash-light.svg" alt="Trash icon"/></button>
                 </div>
             </Show>
-            <div class="flex col justify-center">
+            <div class="flex col justify-center ph-sm">
             {move || match stored_id.get_value().get() {
                 Some(_) => view!{
                     <HomeAppView app={app} edit={is_editing} />

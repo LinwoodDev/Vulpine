@@ -1,0 +1,27 @@
+@use "../node_modules/@linwooddev/style/scss/main";
+@use "../node_modules/@linwooddev/style/scss/colors";
+
+.dialog {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  flex-direction: column;
+  &::backdrop {
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: main.$elevation-filter;
+  }
+  border: 0;
+  border-radius: main.$border-radius;
+  background: colors.$background;
+  color: colors.$background-text;
+  padding: 1rem;
+  &-title {
+    display: flex;
+    justify-content: space-between;
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+  }
+}
