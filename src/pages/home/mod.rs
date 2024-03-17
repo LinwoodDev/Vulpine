@@ -62,10 +62,12 @@ fn HomeListView(#[prop(optional_no_strip, into)] id: MaybeProp<String>) -> impl 
         </Dialog>
         <ul class="col min-w-md gap-xs mh-xs" class:show-sm={show}>
             <li class="row justify-between align-center ph-xs">
-                <h2 class="bold"><a href="/" class="no-decoration normal-color">Apps</a></h2>
+                <a href="/settings" class="btn secondary p-xs">
+                    <img src="/public/logo.png" alt="Vulpine logo" class="big-icon" />
+                </a>
+                <h2 class="bold"><a href="/" class="no-decoration text">Apps</a></h2>
                 <div class="row gap-xs">
                     <button on:click={move |_| show_add.set(true)} class="btn secondary p-xs"><img class="invert icon" src="/public/icons/plus-light.svg" alt="Plus icon"/></button>
-                    <a href="/settings" class="btn secondary p-xs"><img class="invert icon" title="Settings" src="/public/icons/gear-light.svg" alt="Gear icon"/></a>
                 </div>
             </li>
             {move || match items.get() {
