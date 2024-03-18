@@ -1,5 +1,25 @@
 use leptos::*;
 use shared::models::app::{VulpineAction, VulpineApp, VulpineExecutable};
+use strum::{EnumIter, IntoEnumIterator};
+
+use super::{general::GeneralAppView, resources::ResorcesAppView};
+
+#[derive(EnumIter, Debug, PartialEq, Clone, Copy)]
+pub enum AppTab {
+    General,
+    Executables,
+    Actions,
+}
+
+impl AppTab {
+    fn display_name(&self) -> &str {
+        match self {
+            AppTab::General => "General",
+            AppTab::Executables => "Executables",
+            AppTab::Actions => "Actions",
+        }
+    }
+}
 
 #[component]
 pub fn HomeAppView(
@@ -16,6 +36,8 @@ pub fn HomeAppView(
         });
         adding_executable_name.set(String::new());
     };
+    let current_tab = create_rw_signal(AppTab::General);
+    let tab = create_memo(move |_| if edit.get() {current_tab.get()} else {AppTab::General});
     let adding_action_name = create_rw_signal::<String>(String::new());
     let on_action_add = move |_| {
         app.update(|app| {
@@ -27,89 +49,34 @@ pub fn HomeAppView(
 
     let action_name = create_rw_signal::<String>(String::new());
     let action = create_memo(move |_| app.get().actions.get(&action_name.get()).cloned());
+    
+    
+    let empty = View::default();
+    let view = create_memo(move |_| match current_tab.get() {
+        AppTab::General => view! {<GeneralAppView app={app} edit={edit} />},
+        AppTab::Executables => view! {<ResorcesAppView app={app} edit={edit} />},
+        _ => empty,
+    });
+
     view! {
         <div class="col gap-xs flex h-full">
-            {move || format!("Edit: {:?}", edit.get())}
-            <div class="form-group">
-                <label for="name">"Name"</label>
-                <input type="text" id="name"
-                    readonly={move || !edit.get()}
-                    prop:value={move || app.get().name}
-                    on:input={move |ev| {
-                        let name = event_target_value(&ev);
-                        app.update(|app| app.name = name);
-                    }} />
-            </div>
-            <div class="form-group">
-                <label for="version">"Version"</label>
-                <input type="text" id="version"
-                    readonly={move || !edit.get()}
-                    prop:value={move || app.get().version}
-                    on:input={move |ev| {
-                        let version = event_target_value(&ev);
-                        app.update(|app| app.version = version);
-                    }} />
-            </div>
-            <div class="form-group">
-                <label for="description">"Description"</label>
-                <textarea id="description"
-                    class="resize-vertical h-xs max-h-xl min-h-xs"
-                    readonly={move || !edit.get()}
-                    prop:value={move || app.get().description}
-                    on:input={move |ev| {
-                        let description = event_target_value(&ev);
-                        app.update(|app| app.description = description);
-                    }} />
-            </div>
-            <h3>"Executables"</h3>
-            <div class="col card paper p-sm gap-xs">
-                {move || format!("Exes: {:?}", app.get().executables.len())}
-                <For each={move || app.get().executables.clone()} key={|(key, _)| key.to_string()}
-                    children={move |(name, exe)| {
-                        let id = store_value(name.to_string());
+            <Show when={move || edit.get()}>
+                <div class="row overflow-x gap-xs card paper ph-xs">
+                    {move || AppTab::iter().map(|tab| {
+                        let cloned_tab = tab.clone();
+                        let tab_name = tab.display_name().to_string();
+                        let on_click = move |_| current_tab.set(cloned_tab);
+                        let current_tab = current_tab.clone();
                         view! {
-                            <div class="card fill col">
-                                <div class="row justify-between align-center">
-                                    <strong>{name}</strong>
-                                    <Show when={move || edit.get()}>
-                                        <button class="btn p-xs" on:click={move |_| {
-                                            let id = id.get_value().to_string();
-                                            app.update(move |app| {
-                                                app.executables.remove(&id);
-                                            });
-                                        }}>
-                                            <img class="invert icon" title="Remove" src="/public/icons/trash-light.svg" alt="Trash icon"/>
-                                        </button>
-                                    </Show>
-                                </div>
-                                <div class="form-group">
-                                    <label for="env-description">"Description"</label>
-                                    <input type="text" id="env-description"
-                                        readonly={move || !edit.get()}
-                                        prop:value={move || exe.description.to_string()}
-                                        on:input={move |ev| {
-                                            let description = event_target_value(&ev);
-                                            let id = id.get_value().to_string();
-                                            app.update(move |app| {
-                                                app.executables.entry(id)
-                                                    .and_modify(|exe| exe.description = description);
-                                            });
-                                        }} />
-                                </div>
-                            </div>
+                            <button class="btn" class:active={move || current_tab.get() == tab}
+                                on:click=on_click>
+                                {tab_name}
+                            </button>
                         }
-                    }
-                } />
-                <Show when={move || edit.get()}>
-                    <hr />
-                    <div class="row">
-                        <input type="text" class="flex" prop:value={adding_executable_name.clone()} on:input={move |ev| adding_executable_name.set(event_target_value(&ev))} />
-                        <button class="btn p-xs" on:click=on_executable_add>
-                            <img class="invert icon" title="Add" src="/public/icons/plus-light.svg" alt="Plus icon"/>
-                        </button>
-                    </div>
-                </Show>
-            </div>
+                    }).collect_view()}
+                </div>
+            </Show>
+            <h3>"Executables"</h3>
             <h3>"Actions"</h3>
             <div class="overflow-x row gap-xs align-center justify-start">
                 { move || app.get().actions.iter().map(|(name, _)| {

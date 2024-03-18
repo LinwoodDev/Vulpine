@@ -13,7 +13,7 @@
   "packageManager": "pnpm@8.15.4",
   "dependencies": {
     "@floating-ui/dom": "^1.6.3",
-    "@linwooddev/style": "^0.3.2",
-    "sass": "^1.71.1"
+    "@linwooddev/style": "^0.3.6",
+    "sass": "^1.72.0"
   }
 }

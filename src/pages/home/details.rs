@@ -31,17 +31,9 @@ pub fn HomeDetailsView(#[prop(optional_no_strip, into)] id: MaybeProp<String>) -
                 return;
             };
             let app = app.get_untracked();
-            let creating = stored_id
-                .get_value()
-                .get_untracked()
-                .unwrap_or_default()
-                .is_empty();
-            if update_app(id.clone(), app.clone(), creating).await {
+            if update_app(id.clone(), app.clone(), false).await {
                 fetched.try_update(|_| Some(app));
                 current_id.set(None);
-                if creating {
-                    navigate.get_value()(&format!("/apps/{}", id), Default::default());
-                }
             }
         });
     };

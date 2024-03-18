@@ -1,5 +1,7 @@
 pub mod app;
 pub mod details;
+pub mod general;
+pub mod resources;
 
 use leptos::*;
 use leptos_router::*;
@@ -33,6 +35,7 @@ fn HomeListView(#[prop(optional_no_strip, into)] id: MaybeProp<String>) -> impl 
     let stored_id = store_value(id);
     let show = move || stored_id.get_value().get().is_some();
     let show_add = create_rw_signal(false);
+    let show_menu = create_rw_signal(false);
     let add_name = create_rw_signal(String::new());
     let navigate = store_value(use_navigate());
     let on_app_add = move |_| {
@@ -60,11 +63,30 @@ fn HomeListView(#[prop(optional_no_strip, into)] id: MaybeProp<String>) -> impl 
                 </div>
             </form>
         </Dialog>
+        <Dialog title="Vulpine" show={show_menu} on_close={move |_| show_menu.set(false)}>
+            <div class="col w-lg max-w-full gap-xs">
+                <button class="card secondary bold">"Import"</button>
+                <button class="card secondary bold">"Export"</button>
+                <a href="/settings" class="card secondary bold">"Settings"</a>
+                <hr />
+                <a href="/settings" class="card secondary bold">"Documentation"</a>
+                <a href="/settings" class="card secondary bold">"Release notes"</a>
+                <a href="/settings" class="card secondary bold">"Matrix"</a>
+                <a href="/settings" class="card secondary bold">"Discord"</a>
+                <a href="/settings" class="card secondary bold">"Crowdin"</a>
+                <a href="/settings" class="card secondary bold">"Source"</a>
+                <a href="/settings" class="card secondary bold">"Changelog"</a>
+                <hr />
+                <a href="/settings" class="card secondary bold">"License"</a>
+                <a href="/settings" class="card secondary bold">"Imprint"</a>
+                <a href="/settings" class="card secondary bold">"Privacy policy"</a>
+            </div>
+        </Dialog>
         <ul class="col min-w-md gap-xs mh-xs" class:show-sm={show}>
             <li class="row justify-between align-center ph-xs">
-                <a href="/settings" class="btn secondary p-xs">
+                <button on:click={move |_| show_menu.set(true)} class="btn secondary p-xs">
                     <img src="/public/logo.png" alt="Vulpine logo" class="big-icon" />
-                </a>
+                </button>
                 <h2 class="bold"><a href="/" class="no-decoration text">Apps</a></h2>
                 <div class="row gap-xs">
                     <button on:click={move |_| show_add.set(true)} class="btn secondary p-xs"><img class="invert icon" src="/public/icons/plus-light.svg" alt="Plus icon"/></button>
