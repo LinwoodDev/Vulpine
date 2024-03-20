@@ -1,3 +1,4 @@
+pub mod accordion;
 pub mod dialog;
 pub mod icon;
 pub mod map;

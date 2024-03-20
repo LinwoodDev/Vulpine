@@ -1,3 +1,4 @@
+pub mod actions;
 pub mod app;
 pub mod details;
 pub mod general;
@@ -55,7 +56,7 @@ fn HomeListView(#[prop(optional_no_strip, into)] id: MaybeProp<String>) -> impl 
             <form method="dialog">
                 <div class="form-group">
                     <label for="name">"Name"</label>
-                    <input type="text" id="name" prop:value={add_name} on:input={move |ev| add_name.set(event_target_value(&ev))} />
+                    <input type="text" id="name" autofocus prop:value={add_name} on:input={move |ev| add_name.set(event_target_value(&ev))} />
                 </div>
                 <div class="row justify-end gap-xs mt-md">
                     <button class="btn secondary" on:click=on_app_add>"Cancel"</button>

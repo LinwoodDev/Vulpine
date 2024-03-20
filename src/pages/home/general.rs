@@ -1,12 +1,17 @@
 use leptos::*;
 use shared::models::app::VulpineApp;
 
+use crate::pages::home::actions::ActionsAppView;
+
 #[component]
 pub fn GeneralAppView(
     app: RwSignal<VulpineApp>,
     #[prop(into)] edit: MaybeSignal<bool>,
 ) -> impl IntoView {
     view! {
+        <Show when={move || !edit.get()}>
+            <ActionsAppView app={app.clone()} edit={edit.clone()} />
+        </Show>
         <div class="col">
             <div class="form-group">
                 <label for="name">"Name"</label>

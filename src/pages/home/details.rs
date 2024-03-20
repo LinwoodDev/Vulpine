@@ -53,6 +53,9 @@ pub fn HomeDetailsView(#[prop(optional_no_strip, into)] id: MaybeProp<String>) -
                 <div class="row align-center gap-sm card paper pv-xs ph-md">
                     <a href="/" class="btn secondary p-xs hide-sm"><img class="invert icon" title="Home" src="/public/icons/house-light.svg" alt="House icon"/></a>
                     <h2 class="row flex">
+                        <Show when={move || is_editing.get()}>
+                            "Edit: "
+                        </Show>
                         {move || current_id.get().or(stored_id.get_value().get()).unwrap_or_default()}
                     </h2>
                     <button class="btn primary" on:click=on_edit>

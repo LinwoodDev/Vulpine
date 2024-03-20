@@ -1,5 +1,6 @@
 use leptos::{html::Dialog, *};
-use web_sys::MouseEvent;
+use wasm_bindgen::JsCast;
+use web_sys::{Element, MouseEvent};
 
 #[component]
 pub fn Dialog(
@@ -22,9 +23,25 @@ pub fn Dialog(
     let on_close_callback = on_close.unwrap_or(Callback::new(|_| {}));
     let title = store_value(title);
     let children = store_value(children);
+    let on_dialog_click = move |e: MouseEvent| {
+        let Some(target) = e.target() else {
+            return;
+        };
+        let Ok(element) = target.dyn_into::<Element>() else {
+            return;
+        };
+        let rect = element.get_bounding_client_rect();
+        if rect.left() > e.client_x().into()
+            || rect.right() < e.client_x().into()
+            || rect.top() > e.client_y().into()
+            || rect.bottom() < e.client_y().into()
+        {
+            on_close_callback.call(e);
+        }
+    };
     view! {
         <Portal>
-            <dialog class="dialog" display="flex" _ref=input_ref>
+            <dialog class="dialog" display="flex" _ref=input_ref on:click=on_dialog_click>
                 <div class="dialog-title">
                     {move || title.get_value().get().to_string()}
                     <Show when={move || on_close.is_some()}>

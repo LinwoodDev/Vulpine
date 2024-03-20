@@ -7,6 +7,7 @@ edition = "2021"
 [dependencies]
 leptos = { version = "0.6", features = ["csr"] }
 leptos_router = { version = "0.6", features = ["csr"] }
+web-sys = { version = "0.3", features = ["DomRect", "Element"] }
 wasm-bindgen = { version = "0.2", features = ["serde-serialize"] }
 wasm-bindgen-futures = "0.4"
 js-sys = "0.3"
@@ -16,5 +17,5 @@ serde-wasm-bindgen = "0.6"
 shared = { path = "./shared" }
 
 [workspace]
-members = [ "shared","src-tauri"]
+members = ["shared", "src-tauri"]
 resolver = "2"
