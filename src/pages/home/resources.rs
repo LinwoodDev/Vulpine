@@ -37,7 +37,7 @@ pub fn ResorcesAppView(
                                                 app.executables.remove(&id);
                                             });
                                         }}>
-                                            <img class="invert icon" title="Remove" src="/public/icons/trash-light.svg" alt="Trash icon"/>
+                                            <i class="ph-light ph-trash text-icon"/>
                                         </button>
                                     </Show>
                                 </AccordionItemTitle>
@@ -66,8 +66,8 @@ pub fn ResorcesAppView(
                 <hr />
                 <div class="card paper row gap-xs ph-xs">
                     <input type="text" class="flex" prop:value={adding_executable_name.clone()} on:input={move |ev| adding_executable_name.set(event_target_value(&ev))} />
-                    <button class="btn p-xs" on:click=on_executable_add>
-                        <img class="invert icon" title="Add" src="/public/icons/plus-light.svg" alt="Plus icon"/>
+                    <button class="btn secondary row p-sm" on:click=on_executable_add>
+                        <i class="ph-light ph-plus text-icon"/>
                     </button>
                 </div>
             </Show>

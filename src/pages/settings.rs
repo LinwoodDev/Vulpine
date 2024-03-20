@@ -6,7 +6,9 @@ pub fn SettingsPage() -> impl IntoView {
         <div class="col gap-md container-md">
             <div class="col">
                 <div class="row align-center wrap">
-                    <a href="/" class="btn secondary p-xs"><img class="invert icon" title="Home" src="/public/icons/house-light.svg" alt="House icon"/></a>
+                    <a href="/" class="btn row secondary p-xs hide-sm">
+                        <i class="ph-light ph-arrow-left text-icon"/>
+                    </a>
                     <h1 class="font-bold ph-sm">"Settings"</h1>
                 </div>
                 <hr />

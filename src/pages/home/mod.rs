@@ -90,7 +90,9 @@ fn HomeListView(#[prop(optional_no_strip, into)] id: MaybeProp<String>) -> impl 
                 </button>
                 <h2 class="bold"><a href="/" class="no-decoration text">Apps</a></h2>
                 <div class="row gap-xs">
-                    <button on:click={move |_| show_add.set(true)} class="btn secondary p-xs"><img class="invert icon" src="/public/icons/plus-light.svg" alt="Plus icon"/></button>
+                    <button on:click={move |_| show_add.set(true)} class="btn secondary row p-xs">
+                        <i class="ph-light ph-plus text-icon" />
+                    </button>
                 </div>
             </li>
             {move || match items.get() {

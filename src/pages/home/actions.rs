@@ -30,8 +30,8 @@ pub fn ActionsAppView(
                         <div class="row gap-xs align-center justify-between">
                             <p class="m-none">{name.to_string()}</p>
                             <Show when={move || edit.get()}>
-                                <button class="btn p-none min-w-max" on:click=on_delete>
-                                    <img class="invert icon" title="Delete" src="/public/icons/trash-light.svg" alt="Trash icon"/>
+                                <button class="btn p-none min-w-max row p-sm" on:click=on_delete>
+                                    <i class="ph-light ph-trash text-icon"/>
                                 </button>
                             </Show>
                         </div>
@@ -41,8 +41,8 @@ pub fn ActionsAppView(
             <Show when={move || edit.get()}>
                 <div class="card paper row gap-xs ph-xs">
                     <input type="text" prop:value={adding_action_name.clone()} on:input={move |ev| adding_action_name.set(event_target_value(&ev))} />
-                    <button href="#" class="btn p-xs" on:click=on_action_add>
-                        <img class="invert icon" title="Add" src="/public/icons/plus-light.svg" alt="Plus icon"/>
+                    <button href="#" class="btn p-xs row p-sm" on:click=on_action_add>
+                        <i class="ph-light ph-plus text-icon"/>
                     </button>
                 </div>
             </Show>

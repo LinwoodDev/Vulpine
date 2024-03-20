@@ -51,25 +51,29 @@ pub fn HomeDetailsView(#[prop(optional_no_strip, into)] id: MaybeProp<String>) -
         <div class="col card paper flex min-w-md h-full overflow-y" class:show-sm={move || stored_id.get_value().get().is_none()}>
             <Show when={move || !show()}>
                 <div class="row align-center gap-sm card paper pv-xs ph-md">
-                    <a href="/" class="btn secondary p-xs hide-sm"><img class="invert icon" title="Home" src="/public/icons/house-light.svg" alt="House icon"/></a>
+                    <a href="/" class="btn secondary row p-xs hide-sm">
+                        <i class="ph-light ph-arrow-left text-icon"/>
+                    </a>
                     <h2 class="row flex">
                         <Show when={move || is_editing.get()}>
                             "Edit: "
                         </Show>
                         {move || current_id.get().or(stored_id.get_value().get()).unwrap_or_default()}
                     </h2>
-                    <button class="btn primary" on:click=on_edit>
+                    <button class="btn primary row p-sm" on:click=on_edit>
                         {move || if current_id.get().is_some() {
                             view! {
-                                <img class="invert icon" title="Save" src="/public/icons/floppy-disk-light.svg" alt="Floppy disk icon"/>
+                                <i class="ph-light ph-floppy-disk text-icon"/>
                             }.into_view()
                         } else {
                             view! {
-                                <img class="invert icon" title="Edit" src="/public/icons/pencil-simple-light.svg" alt="Pencil icon"/>
+                                <i class="ph-light ph-pencil-simple text-icon"/>
                             }.into_view()
                         }}
                     </button>
-                    <button class="btn secondary" on:click=on_delete><img class="invert icon" title="Delete" src="/public/icons/trash-light.svg" alt="Trash icon"/></button>
+                    <button class="btn secondary row p-sm" on:click=on_delete>
+                        <i class="ph-light ph-trash text-icon"/>
+                    </button>
                 </div>
             </Show>
             <div class="flex col justify-center ph-sm">
