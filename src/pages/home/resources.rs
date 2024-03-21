@@ -9,16 +9,18 @@ pub fn ResorcesAppView(
     #[prop(into)] edit: MaybeSignal<bool>,
 ) -> impl IntoView {
     let adding_executable_name = create_rw_signal::<String>(String::new());
-    let on_executable_add = move |_| {
+    let current_executable = create_rw_signal::<Option<String>>(None);
+    let on_executable_add = store_value(move || {
+        let name = adding_executable_name.get_untracked();
         app.update(|app| {
             app.executables.insert(
-                adding_executable_name.get_untracked(),
+                name.clone(),
                 VulpineExecutable::default(),
             );
         });
+        current_executable.set(Some(name));
         adding_executable_name.set(String::new());
-    };
-    let current_executable = create_rw_signal::<Option<String>>(None);
+    });
     view! {
         <div class="col p-sm gap-xs container-md w-full">
             {move || format!("Exes: {:?}", app.get().executables.len())}
@@ -64,9 +66,9 @@ pub fn ResorcesAppView(
             </Accordion>
             <Show when={move || edit.get()}>
                 <hr />
-                <div class="card paper row gap-xs ph-xs">
-                    <input type="text" class="flex" prop:value={adding_executable_name.clone()} on:input={move |ev| adding_executable_name.set(event_target_value(&ev))} />
-                    <button class="btn secondary row p-sm" on:click=on_executable_add>
+                <div class="card paper row gap-xs ph-xs align-center">
+                    <input type="text" class="flex" prop:value={adding_executable_name.clone()} on:input={move |ev| adding_executable_name.set(event_target_value(&ev))} on:change={move |_| on_executable_add.get_value()()} />
+                    <button class="btn secondary row p-xs" on:click={move |_| on_executable_add.get_value()()}>
                         <i class="ph-light ph-plus text-icon"/>
                     </button>
                 </div>

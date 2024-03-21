@@ -66,21 +66,60 @@ fn HomeListView(#[prop(optional_no_strip, into)] id: MaybeProp<String>) -> impl 
         </Dialog>
         <Dialog title="Vulpine" show={show_menu} on_close={move |_| show_menu.set(false)}>
             <div class="col w-lg max-w-full gap-xs">
-                <button class="card secondary bold">"Import"</button>
-                <button class="card secondary bold">"Export"</button>
-                <a href="/settings" class="card secondary bold">"Settings"</a>
+                <a href="/settings" class="card secondary p-sm bold row gap-xs">
+                    <i class="ph-light ph-gear text-icon" />
+                    "Import"
+                </a>
+                <a href="/settings" class="card secondary p-sm bold row gap-xs">
+                    <i class="ph-light ph-gear text-icon" />
+                    "Export"
+                </a>
+                <a href="/settings" class="card secondary p-sm bold row gap-xs">
+                    <i class="ph-light ph-gear text-icon" />
+                    "Settings"
+                </a>
                 <hr />
-                <a href="/settings" class="card secondary bold">"Documentation"</a>
-                <a href="/settings" class="card secondary bold">"Release notes"</a>
-                <a href="/settings" class="card secondary bold">"Matrix"</a>
-                <a href="/settings" class="card secondary bold">"Discord"</a>
-                <a href="/settings" class="card secondary bold">"Crowdin"</a>
-                <a href="/settings" class="card secondary bold">"Source"</a>
-                <a href="/settings" class="card secondary bold">"Changelog"</a>
+                <a href="/settings" class="card secondary p-sm bold row gap-xs">
+                    <i class="ph-light ph-article text-icon" />
+                    "Documentation"
+                </a>
+                <a href="/settings" class="card secondary p-sm bold row gap-xs">
+                    <i class="ph-light ph-flag text-icon" />
+                    "Release notes"
+                </a>
+                <a href="/settings" class="card secondary p-sm bold row gap-xs">
+                    <i class="ph-light ph-users text-icon" />
+                    "Matrix"
+                </a>
+                <a href="/settings" class="card secondary p-sm bold row gap-xs">
+                    <i class="ph-light ph-users text-icon" />
+                    "Discord"
+                </a>
+                <a href="/settings" class="card secondary p-sm bold row gap-xs">
+                    <i class="ph-light ph-translate text-icon" />
+                    "Crowdin"
+                </a>
+                <a href="/settings" class="card secondary p-sm bold row gap-xs">
+                    <i class="ph-light ph-code text-icon" />
+                    "Source"
+                </a>
+                <a href="/settings" class="card secondary p-sm bold row gap-xs">
+                    <i class="ph-light ph-arrow-counter-clockwise text-icon" />
+                    "Changelog"
+                </a>
                 <hr />
-                <a href="/settings" class="card secondary bold">"License"</a>
-                <a href="/settings" class="card secondary bold">"Imprint"</a>
-                <a href="/settings" class="card secondary bold">"Privacy policy"</a>
+                <a href="/settings" class="card secondary p-sm bold row gap-xs">
+                    <i class="ph-light ph-stack text-icon" />
+                    "License"
+                </a>
+                <a href="/settings" class="card secondary p-sm bold row gap-xs">
+                    <i class="ph-light ph-identification-card text-icon" />
+                    "Imprint"
+                </a>
+                <a href="/settings" class="card secondary p-sm bold row gap-xs">
+                    <i class="ph-light ph-shield text-icon" />
+                    "Privacy policy"
+                </a>
             </div>
         </Dialog>
         <ul class="col min-w-md gap-xs mh-xs" class:show-sm={show}>

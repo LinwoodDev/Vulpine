@@ -7,7 +7,7 @@ use super::{general::GeneralAppView, resources::ResorcesAppView, actions::Action
 #[derive(EnumIter, Debug, PartialEq, Clone, Copy)]
 pub enum AppTab {
     General,
-    Executables,
+    Resources,
     Actions,
 }
 
@@ -15,7 +15,7 @@ impl AppTab {
     fn display_name(&self) -> &str {
         match self {
             AppTab::General => "General",
-            AppTab::Executables => "Executables",
+            AppTab::Resources => "Resources",
             AppTab::Actions => "Actions",
         }
     }
@@ -30,7 +30,7 @@ pub fn HomeAppView(
     
     let view = create_memo(move |_| match current_tab.get() {
         AppTab::General => view! {<GeneralAppView app={app} edit={edit} />}.into_view(),
-        AppTab::Executables => view! {<ResorcesAppView app={app} edit={edit} />}.into_view(),
+        AppTab::Resources => view! {<ResorcesAppView app={app} edit={edit} />}.into_view(),
         AppTab::Actions => view! {<ActionsAppView app={app} edit={edit} />}.into_view(),
     });
 
