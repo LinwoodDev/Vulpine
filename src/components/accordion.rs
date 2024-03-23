@@ -35,7 +35,8 @@ pub fn AccordionItem(#[prop(into)] key: String, children: Children) -> impl Into
     let is_active = create_memo(move |_| {
         context
             .as_ref()
-            .map_or(false, |context| context.value.get().map_or(false, |e| key.get_value() == e))
+            .and_then(|context| context.value.get())
+            .map_or(false, |e| key.get_value() == e))
     });
     let on_click = move |_| {
         on_change.get_value().map(|on_change| {

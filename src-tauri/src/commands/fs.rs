@@ -1,8 +1,7 @@
 use std::{fs, path::PathBuf};
 
-use shared::models::{app::VulpineApp, config::VulpineAppConfig};
+use shared::models::{app::{AppName, VulpineApp}, config::VulpineAppConfig};
 use tauri::Manager;
-
 
 #[tauri::command]
 pub fn get_apps(app_handle: tauri::AppHandle) -> Vec<String> {
@@ -16,22 +15,22 @@ pub fn get_apps(app_handle: tauri::AppHandle) -> Vec<String> {
     let found = app_dir
         .filter_map(|entry| entry.ok())
         .map(|entry| entry.path())
-        .filter(|path| path.is_dir())
-        .filter(|path| path.join("app.toml").exists())
-        .filter_map(|path| path.file_name().map(|name| name.to_string_lossy().to_string()))
+        .filter(|path| path.is_file())
+        .filter(|path| path.extension().map(|ext| ext == "toml").unwrap_or(false))
+        .map(|path| {
+            path.file_stem()
+                .map(|stem| stem.to_string_lossy().to_string())
+                .unwrap_or_default()
+        })
         .collect();
     found
 }
 
 #[tauri::command]
-pub fn get_app(app_handle: tauri::AppHandle, name: String) -> Option<VulpineApp> {
-    let Some(app_dir) = get_app_directory(&app_handle, &name) else {
+pub fn get_app(app_handle: tauri::AppHandle, name: AppName) -> Option<VulpineApp> {
+    let Some(app_file) = get_app_file(&app_handle, &name) else {
         return None;
     };
-    let app_file = app_dir.join("app.toml");
-    if !app_file.exists() {
-        return None;
-    }
     let Ok(app_toml) = fs::read_to_string(app_file) else {
         return None;
     };
@@ -42,24 +41,22 @@ pub fn get_app(app_handle: tauri::AppHandle, name: String) -> Option<VulpineApp>
 }
 
 #[tauri::command]
-pub fn update_app(app_handle: tauri::AppHandle, name: String, app: VulpineApp, create : bool) -> bool {
+pub fn update_app(
+    app_handle: tauri::AppHandle,
+    name: AppName,
+    app: VulpineApp,
+    create: bool,
+) -> bool {
     let Ok(apps_dir) = get_apps_directory(&app_handle) else {
         return false;
     };
-    let file_name = safe_filename(&name);
-    if file_name.is_empty() {
-        return false;
-    }
+    let name = name.as_str();
     println!("Updating app: {:?}", app);
-    let app_dir = apps_dir.join(file_name);
-    let app_file = app_dir.join("app.toml");
+    let app_file = apps_dir.join(name);
     let Ok(app_toml) = toml::to_string_pretty(&app) else {
         return false;
     };
     if app_file.exists() && create {
-        return false;
-    }
-    if fs::create_dir_all(app_dir).is_err() {
         return false;
     }
     if fs::write(app_file, app_toml).is_err() {
@@ -69,60 +66,21 @@ pub fn update_app(app_handle: tauri::AppHandle, name: String, app: VulpineApp, c
 }
 
 #[tauri::command]
-pub fn delete_app(app_handle: tauri::AppHandle, name: String) -> bool {
-    let Some(app_dir) = get_app_directory(&app_handle, &name) else {
+pub fn delete_app(app_handle: tauri::AppHandle, name: AppName) -> bool {
+    let Some(app_file) = get_app_file(&app_handle, &name) else {
         return false;
     };
-    if !app_dir.exists() {
-        return false;
-    }
-    let Ok(_) = fs::remove_dir_all(app_dir) else {
+    let Ok(_) = fs::remove_dir_all(app_file) else {
         return false;
     };
     true
-}
-
-#[tauri::command]
-pub fn get_config(app_handle: tauri::AppHandle, name: String) -> Option<VulpineAppConfig> {
-    let Some(app_dir) = get_app_directory(&app_handle, &name) else {
-        return None;
-    };
-    let config_file = app_dir.join("config.toml");
-    if !config_file.exists() {
-        return None;
-    }
-    let Ok(app_toml) = fs::read_to_string(config_file) else {
-        return None;
-    };
-    let Ok(app) = toml::from_str(&app_toml) else {
-        return None;
-    };
-    Some(app)
-}
-
-#[tauri::command]
-pub fn update_config(app_handle: tauri::AppHandle, name: String, config: VulpineAppConfig) -> bool {
-    let Some(app_dir) = get_app_directory(&app_handle, &name) else {
-        return false;
-    };
-    let config_file = app_dir.join("config.toml");
-    let Ok(app_toml) = toml::to_string_pretty(&config) else {
-        return false;
-    };
-    if fs::write(config_file, app_toml).is_err() {
-        return false;
-    };
-    true
-}
-
-const ALLOWED_SPECIAL_CHARS: &str = "_- ";
-
-pub fn safe_filename(name: &str) -> String {
-    name.trim().replace(|c: char| !c.is_ascii_alphanumeric() && !ALLOWED_SPECIAL_CHARS.contains(c), "")
 }
 
 pub fn get_data_directory(app_handle: &tauri::AppHandle) -> tauri::Result<PathBuf> {
-    app_handle.path().document_dir().map(|path| path.join("Linwood/Vulpine"))
+    app_handle
+        .path()
+        .document_dir()
+        .map(|path| path.join("Linwood/Vulpine"))
 }
 
 pub fn get_apps_directory(app_handle: &tauri::AppHandle) -> tauri::Result<PathBuf> {
@@ -133,13 +91,10 @@ pub fn get_apps_directory(app_handle: &tauri::AppHandle) -> tauri::Result<PathBu
     path
 }
 
-pub fn get_app_directory(app_handle: &tauri::AppHandle, name: &str) -> Option<PathBuf> {
+pub fn get_app_file(app_handle: &tauri::AppHandle, name: &AppName) -> Option<PathBuf> {
+    let name = name.as_str();
     let Ok(apps_dir) = get_apps_directory(app_handle) else {
         return None;
     };
-    let file_name = safe_filename(name);
-    if file_name.is_empty() {
-        return None;
-    }
-    Some(apps_dir.join(file_name))
+    Some(apps_dir.join(format!("{}.toml", name)))
 }

@@ -14,7 +14,6 @@ pub fn run() {
         .plugin(tauri_plugin_shell::init())
         .invoke_handler(tauri::generate_handler![
             greet, get_apps, update_app, get_app, delete_app,
-            get_config, update_config,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

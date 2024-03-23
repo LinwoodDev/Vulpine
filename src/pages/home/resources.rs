@@ -1,5 +1,5 @@
 use leptos::*;
-use shared::models::app::{VulpineApp, VulpineExecutable};
+use shared::models::app::{VulpineApp, VulpineResource};
 
 use crate::components::accordion::{Accordion, AccordionItem, AccordionItemContent, AccordionItemTitle};
 
@@ -13,9 +13,9 @@ pub fn ResorcesAppView(
     let on_executable_add = store_value(move || {
         let name = adding_executable_name.get_untracked();
         app.update(|app| {
-            app.executables.insert(
+            app.resources.insert(
                 name.clone(),
-                VulpineExecutable::default(),
+                VulpineResource::default(),
             );
         });
         current_executable.set(Some(name));
@@ -23,9 +23,9 @@ pub fn ResorcesAppView(
     });
     view! {
         <div class="col p-sm gap-xs container-md w-full">
-            {move || format!("Exes: {:?}", app.get().executables.len())}
+            {move || format!("Exes: {:?}", app.get().resources.len())}
             <Accordion value=current_executable on_change={move |e| current_executable.set(e)}>
-                <For each={move || app.get().executables.clone()} key={|(key, _)| key.to_string()}
+                <For each={move || app.get().resources.clone()} key={|(key, _)| key.to_string()}
                     children={move |(name, exe)| {
                         let id = store_value(name.to_string());
                         let description = store_value(exe.description.to_string());
@@ -36,7 +36,7 @@ pub fn ResorcesAppView(
                                         <button class="btn p-xs" on:click={move |_| {
                                             let id = id.get_value().to_string();
                                             app.update(move |app| {
-                                                app.executables.remove(&id);
+                                                app.resources.shift_remove(&id);
                                             });
                                         }}>
                                             <i class="ph-light ph-trash text-icon"/>
@@ -53,7 +53,7 @@ pub fn ResorcesAppView(
                                                 let description = event_target_value(&ev);
                                                 let id = id.get_value().to_string();
                                                 app.update(move |app| {
-                                                    app.executables.entry(id)
+                                                    app.resources.entry(id)
                                                         .and_modify(|exe| exe.description = description);
                                                 });
                                             }} />

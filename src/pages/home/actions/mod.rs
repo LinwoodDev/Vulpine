@@ -28,7 +28,7 @@ pub fn ActionsAppView(
                     let stored_name = store_value(name.to_string());
                     let on_delete = move |_| {
                         app.update(move |app| {
-                            app.actions.remove(&stored_name.get_value());
+                            app.actions.shift_remove(&stored_name.get_value());
                         });
                     };
                     view! {
@@ -61,7 +61,7 @@ pub fn ActionsAppView(
                                             <button class="btn p-xs" on:click={move |_| {
                                                 let id = id.get_value().to_string();
                                                 app.update(move |app| {
-                                                    app.actions.remove(&id);
+                                                    app.actions.shift_remove(&id);
                                                 });
                                             }}>
                                                 <i class="ph-light ph-trash text-icon"/>

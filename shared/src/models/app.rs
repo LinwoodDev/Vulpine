@@ -1,4 +1,5 @@
-use std::collections::{BTreeMap, HashMap};
+use std::collections::HashMap;
+use indexmap::IndexMap;
 
 use serde::{Deserialize, Serialize};
 
@@ -7,19 +8,13 @@ pub struct VulpineApp {
     pub name: String,
     pub description: String,
     pub version: String,
-    pub actions: BTreeMap<String, VulpineAction>,
-    pub executables: HashMap<String, VulpineExecutable>,
+    pub actions: IndexMap<String, VulpineAction>,
+    pub resources: IndexMap<String, VulpineResource>,
 }
 
 #[derive(Debug, Serialize, Deserialize, Default, Clone, PartialEq)]
-pub struct VulpineExecutable {
+pub struct VulpineResource {
     pub description: String,
-}
-
-#[derive(Debug, Serialize, Deserialize, Default, Clone, PartialEq)]
-pub struct VulpineDownload {
-    pub url: String,
-    pub sha256: Option<String>,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
@@ -54,4 +49,28 @@ pub enum ValueMapping {
         input: String,
         mapping: HashMap<String, String>,
     }
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct AppName(String);
+
+impl AppName {
+    pub fn parse(name: &str) -> Option<Self> {
+        let name = safe_filename(name);
+        if name.is_empty() {
+            None
+        } else {
+            Some(Self(name))
+        }
+    }
+
+    pub fn as_str(&self) -> &str {
+        &self.0
+    }
+}
+
+const ALLOWED_SPECIAL_CHARS: &str = "_- ";
+
+pub fn safe_filename(name: &str) -> String {
+    name.trim().replace(|c: char| !c.is_ascii_alphanumeric() && !ALLOWED_SPECIAL_CHARS.contains(c), "")
 }

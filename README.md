@@ -25,6 +25,8 @@
 
 ---
 
+**This project is still in development and not ready for production use. Please join the matrix or discord server for updates!**
+
 Vulpine helps you to visualize and interact with command line tools. It is a simple and user cross-platform, opensource app built with tauri and rust.
 
 ## Features
