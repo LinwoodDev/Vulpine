@@ -36,7 +36,7 @@ pub fn AccordionItem(#[prop(into)] key: String, children: Children) -> impl Into
         context
             .as_ref()
             .and_then(|context| context.value.get())
-            .map_or(false, |e| key.get_value() == e))
+            .map_or(false, |e| key.get_value() == e)
     });
     let on_click = move |_| {
         on_change.get_value().map(|on_change| {

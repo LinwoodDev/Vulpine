@@ -1,6 +1,6 @@
 use std::{fs, path::PathBuf};
 
-use shared::models::{app::{AppName, VulpineApp}, config::VulpineAppConfig};
+use shared::models::app::{AppName, VulpineApp};
 use tauri::Manager;
 
 #[tauri::command]
