@@ -9,8 +9,8 @@ dependencies:
     specifier: ^1.6.3
     version: 1.6.3
   '@linwooddev/style':
-    specifier: ^0.3.6
-    version: 0.3.6
+    specifier: ^0.3.9
+    version: 0.3.9
   '@phosphor-icons/web':
     specifier: ^2.0.3
     version: 2.0.3
@@ -37,8 +37,8 @@ packages:
     resolution: {integrity: sha512-9TANp6GPoMtYzQdt54kfAyMmz1+osLlXdg2ENroU7zzrtflTLrrC/lgrIfaSe+Wu0b89GKccT7vxXA0MoAIO+Q==}
     dev: false
 
-  /@linwooddev/style@0.3.6:
-    resolution: {integrity: sha512-3WcrBG01qHvPEiEgsOAsMzXPJHff9XsZgunF4QwO7LsZMOGjeiXWLpIbj+YMaY8et2THUFycs+RUvgEd3NVFGg==}
+  /@linwooddev/style@0.3.9:
+    resolution: {integrity: sha512-UljR1p05aoVaf7rw7qLaeFlfPUZbw+NDKPo7qbCJRZr8p+r87Q17Ah1mUK1dl/sdpzkgg3Rz/H3vwfKw+9l8kw==}
     dev: false
 
   /@phosphor-icons/web@2.0.3:
@@ -154,11 +154,11 @@ packages:
     dependencies:
       chokidar: 3.6.0
       immutable: 4.3.5
-      source-map-js: 1.1.0
+      source-map-js: 1.2.0
     dev: false
 
-  /source-map-js@1.1.0:
-    resolution: {integrity: sha512-9vC2SfsJzlej6MAaMPLu8HiBSHGdRAJ9hVFYN1ibZoNkeanmDmLUcIrj6G9DGL7XMJ54AKg/G75akXl1/izTOw==}
+  /source-map-js@1.2.0:
+    resolution: {integrity: sha512-itJW8lvSA0TXEphiRoawsCksnlf8SyvmFzIhltqAHluXd88pkCd+cXJVHTDwdCr0IzwptSm035IHQktUu1QUMg==}
     engines: {node: '>=0.10.0'}
     dev: false
 

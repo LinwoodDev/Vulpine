@@ -48,19 +48,19 @@ pub fn HomeDetailsView(#[prop(optional_no_strip, into)] id: MaybeProp<String>) -
         });
     };
     view! {
-        <div class="col card paper flex min-w-md h-full overflow-y" class:show-sm={move || stored_id.get_value().get().is_none()}>
+        <div class="col card paper flex min-w-md h-full overflow-y mp-none" class:show-sm={move || stored_id.get_value().get().is_none()}>
             <Show when={move || !show()}>
                 <div class="row align-center gap-sm card paper pv-xs ph-md">
                     <a href="/" class="btn secondary row p-xs hide-sm">
                         <i class="ph-light ph-arrow-left text-icon"/>
                     </a>
-                    <h2 class="row flex">
+                    <h2 class="row flex mp-none">
                         <Show when={move || is_editing.get()}>
                             "Edit: "
                         </Show>
                         {move || current_id.get().or(stored_id.get_value().get()).unwrap_or_default()}
                     </h2>
-                    <button class="btn primary row p-sm" on:click=on_edit>
+                    <button class="btn primary p-sm" on:click=on_edit>
                         {move || if current_id.get().is_some() {
                             view! {
                                 <i class="ph-light ph-floppy-disk text-icon"/>
@@ -71,7 +71,7 @@ pub fn HomeDetailsView(#[prop(optional_no_strip, into)] id: MaybeProp<String>) -
                             }.into_view()
                         }}
                     </button>
-                    <button class="btn secondary row p-sm" on:click=on_delete>
+                    <button class="btn secondary p-sm" on:click=on_delete>
                         <i class="ph-light ph-trash text-icon"/>
                     </button>
                 </div>

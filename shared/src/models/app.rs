@@ -67,6 +67,10 @@ impl AppName {
     pub fn as_str(&self) -> &str {
         &self.0
     }
+
+    pub fn as_filename(&self) -> String {
+        format!("{}.toml", self.0)
+    }
 }
 
 const ALLOWED_SPECIAL_CHARS: &str = "_- ";

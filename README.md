@@ -45,6 +45,8 @@ Install rust and pnpm first.
 Then install the dependencies of tauri. Click [here](https://beta.tauri.app/guides/prerequisites/) for more information.
 
 ```bash
+rustup toolchain install nightly
+rustup default nightly
 rustup target add wasm32-unknown-unknown
 cargo install tauri-cli --version "^2.0.0-beta" --locked
 cargo install trunk
@@ -53,8 +55,19 @@ pnpm install
 
 ### Running in development
 
+To have faster compile times, you can set the number of threads to use in the RUSTFLAGS environment variable.
+
+Windows:
+
 ```bash
+$env:RUSTFLAGS="-Z threads=8"
 cargo tauri dev
+```
+
+Linux:
+
+```bash
+RUSTFLAGS="-Z threads=8" cargo tauri dev
 ```
 
 ### Building for production

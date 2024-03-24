@@ -1,6 +1,6 @@
 use std::{fs, path::PathBuf};
 
-use shared::models::{app::{AppName, VulpineApp}, config::VulpineAppConfig};
+use shared::models::app::{AppName, VulpineApp};
 use tauri::Manager;
 
 #[tauri::command]
@@ -50,7 +50,7 @@ pub fn update_app(
     let Ok(apps_dir) = get_apps_directory(&app_handle) else {
         return false;
     };
-    let name = name.as_str();
+    let name = name.as_filename();
     println!("Updating app: {:?}", app);
     let app_file = apps_dir.join(name);
     let Ok(app_toml) = toml::to_string_pretty(&app) else {
@@ -70,7 +70,7 @@ pub fn delete_app(app_handle: tauri::AppHandle, name: AppName) -> bool {
     let Some(app_file) = get_app_file(&app_handle, &name) else {
         return false;
     };
-    let Ok(_) = fs::remove_dir_all(app_file) else {
+    let Ok(_) = fs::remove_file(app_file) else {
         return false;
     };
     true
@@ -92,9 +92,9 @@ pub fn get_apps_directory(app_handle: &tauri::AppHandle) -> tauri::Result<PathBu
 }
 
 pub fn get_app_file(app_handle: &tauri::AppHandle, name: &AppName) -> Option<PathBuf> {
-    let name = name.as_str();
+    let name = name.as_filename();
     let Ok(apps_dir) = get_apps_directory(app_handle) else {
         return None;
     };
-    Some(apps_dir.join(format!("{}.toml", name)))
+    Some(apps_dir.join(name))
 }

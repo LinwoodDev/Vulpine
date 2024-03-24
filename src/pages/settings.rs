@@ -6,7 +6,7 @@ pub fn SettingsPage() -> impl IntoView {
         <div class="col gap-md container-md">
             <div class="col">
                 <div class="row align-center wrap">
-                    <a href="/" class="btn row secondary p-xs">
+                    <a href="/" class="btn secondary p-xs">
                         <i class="ph-light ph-arrow-left text-icon"/>
                     </a>
                     <h1 class="font-bold ph-sm">"Settings"</h1>

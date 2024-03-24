@@ -36,7 +36,7 @@ pub fn HomeAppView(
 
     view! {
         <div class="col gap-xs flex h-full">
-            <div class="row overflow-x gap-xs card paper ph-xs">
+            <div class="row overflow-x gap-xs card paper ph-xs pv-none">
                 {move || AppTab::iter().map(|tab| {
                     let cloned_tab = tab.clone();
                     let tab_name = tab.display_name().to_string();
