@@ -1,5 +1,8 @@
+pub mod action;
+
 use leptos::*;
 use shared::models::app::{VulpineAction, VulpineApp};
+use action::ActionDialog;
 
 use crate::components::accordion::{Accordion, AccordionItem, AccordionItemContent, AccordionItemTitle};
 
@@ -10,6 +13,7 @@ pub fn ActionsAppView(
 ) -> impl IntoView {
     let adding_action_name = create_rw_signal::<String>(String::new());
     let current_action = create_rw_signal::<Option<String>>(None);
+    let action_opened = create_rw_signal::<Option<VulpineAction>>(None);
     let on_action_add = store_value(move || {
         let name = adding_action_name.get_untracked();
         app.update(|app| {
@@ -53,7 +57,7 @@ pub fn ActionsAppView(
                     <For each={move || app.get().actions.clone()} key={|(key, _)| key.to_string()}
                         children={move |(name, action)| {
                             let id = store_value(name.to_string());
-                            let description = store_value(action.description.to_string());
+                            let action = store_value(action.clone());
                             view! {
                                 <AccordionItem key=name.to_string()>
                                     <AccordionItemTitle title=&name>
@@ -73,7 +77,7 @@ pub fn ActionsAppView(
                                             <label for="env-description">"Description"</label>
                                             <input type="text" id="env-description"
                                                 readonly={move || !edit.get()}
-                                                prop:value={move || description.get_value()}
+                                                prop:value={move || action.get_value().description}
                                                 on:input={move |ev| {
                                                     let description = event_target_value(&ev);
                                                     let id = id.get_value().to_string();
@@ -83,6 +87,11 @@ pub fn ActionsAppView(
                                                     });
                                                 }} />
                                         </div>
+                                        <button class="btn primary row p-sm" on:click={move |_| {
+                                            action_opened.set(Some(action.get_value()));
+                                        }}>
+                                            <i class="ph-light ph-pencil-simple text-icon"/>
+                                        </button>
                                     </AccordionItemContent>
                                 </AccordionItem>
                             }
@@ -98,5 +107,6 @@ pub fn ActionsAppView(
                 </div>
             </div>
         </Show>
+        <ActionDialog action=action_opened on_close={move |_| action_opened.set(None)} />
     }
 }
