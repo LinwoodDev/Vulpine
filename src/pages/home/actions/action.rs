@@ -1,5 +1,6 @@
 use leptos::*;
 use shared::models::app::VulpineAction;
+use crate::components::graph::{GraphNode, GraphView};
 
 #[component]
 pub fn ActionDialog(#[prop(into)] action: Signal<Option<VulpineAction>>, #[prop(into)] on_close: Callback<VulpineAction>) -> impl IntoView {
@@ -20,7 +21,16 @@ pub fn ActionDialog(#[prop(into)] action: Signal<Option<VulpineAction>>, #[prop(
                         <i class="ph-light ph-x text-icon"/>
                     </button>
                 </div>
-                <div class="flex view card paper">
+                <div class="flex card paper">
+                    <GraphView nodes={vec! [GraphNode {
+                        x: 100,
+                        y: 100,
+                        id: 0,
+                    }]} build_node={|e| {
+                        view! {
+                            <p>{format!("{:?}", e)}</p>
+                        }
+                    }} />
                 </div>
             </div>
         </Show>
