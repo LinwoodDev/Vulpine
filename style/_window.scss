@@ -1,13 +1,11 @@
 @use '../node_modules/@linwooddev/style/scss/main.scss';
 
 .titlebar {
-  height: 30px;
-  background: main.$color-primary;
+  height: 50px;
   .title {
     margin: 0;
     padding: 0 0.5em;
     font-size: 18px;
-    color: main.$color-primary-text;
     user-select: none;
     cursor: default;
     height: 100%;
@@ -32,9 +30,9 @@ main {
 html, body {
   height: 100%;
 }
-.titlebar-button:hover {
-  background: main.$color-primary-light;
-  &.close {
-    background: red;
-  }
+.btn.close {
+  --ls-primary: #ff3b30;
+}
+.btn.square-top-right {
+  border-top-right-radius: 0;
 }

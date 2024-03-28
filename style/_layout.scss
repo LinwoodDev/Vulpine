@@ -7,9 +7,10 @@
   gap: 4px;
   flex-direction: column;
 }
-@container (min-width: #{map.get(main.$breakpoints,'xs')}) {
+@container (min-width: #{map.get(main.$breakpoints,'sm')}) {
   .sidebar-layout {
     flex-direction: row;
+    align-items: stretch;
   }
 }
 

@@ -36,7 +36,6 @@ fn HomeListView(#[prop(optional_no_strip, into)] id: MaybeProp<String>) -> impl 
     let stored_id = store_value(id);
     let show = move || stored_id.get_value().get().is_some();
     let show_add = create_rw_signal(false);
-    let show_menu = create_rw_signal(false);
     let add_name = create_rw_signal(String::new());
     let navigate = store_value(use_navigate());
     let on_app_add = move |_| {
@@ -64,69 +63,8 @@ fn HomeListView(#[prop(optional_no_strip, into)] id: MaybeProp<String>) -> impl 
                 </div>
             </form>
         </Dialog>
-        <Dialog title="Vulpine" show={show_menu} on_close={move |_| show_menu.set(false)}>
-            <div class="col w-lg max-w-full gap-xs mh-sm">
-                <a href="/settings" class="btn card secondary row bold">
-                    <i class="ph-light ph-gear text-icon" />
-                    "Import"
-                </a>
-                <a href="/settings" class="btn card secondary row bold">
-                    <i class="ph-light ph-gear text-icon" />
-                    "Export"
-                </a>
-                <a href="/settings" class="btn card secondary row bold">
-                    <i class="ph-light ph-gear text-icon" />
-                    "Settings"
-                </a>
-                <hr />
-                <a href="/settings" class="btn card secondary row bold">
-                    <i class="ph-light ph-article text-icon" />
-                    "Documentation"
-                </a>
-                <a href="/settings" class="btn card secondary row bold">
-                    <i class="ph-light ph-flag text-icon" />
-                    "Release notes"
-                </a>
-                <a href="/settings" class="btn card secondary row bold">
-                    <i class="ph-light ph-users text-icon" />
-                    "Matrix"
-                </a>
-                <a href="/settings" class="btn card secondary row bold">
-                    <i class="ph-light ph-users text-icon" />
-                    "Discord"
-                </a>
-                <a href="/settings" class="btn card secondary row bold">
-                    <i class="ph-light ph-translate text-icon" />
-                    "Crowdin"
-                </a>
-                <a href="/settings" class="btn card secondary row bold">
-                    <i class="ph-light ph-code text-icon" />
-                    "Source"
-                </a>
-                <a href="/settings" class="btn card secondary row bold">
-                    <i class="ph-light ph-arrow-counter-clockwise text-icon" />
-                    "Changelog"
-                </a>
-                <hr />
-                <a href="/settings" class="btn card secondary row bold">
-                    <i class="ph-light ph-stack text-icon" />
-                    "License"
-                </a>
-                <a href="/settings" class="btn card secondary row bold">
-                    <i class="ph-light ph-identification-card text-icon" />
-                    "Imprint"
-                </a>
-                <a href="/settings" class="btn card secondary row bold">
-                    <i class="ph-light ph-shield text-icon" />
-                    "Privacy policy"
-                </a>
-            </div>
-        </Dialog>
         <ul class="col min-w-md gap-xs mh-xs" class:show-sm={show}>
             <li class="row justify-between align-center ph-xs">
-                <button on:click={move |_| show_menu.set(true)} class="btn secondary p-xs">
-                    <img src="/public/logo.png" alt="Vulpine logo" class="big-icon" />
-                </button>
                 <h2 class="bold"><a href="/" class="no-decoration text">Apps</a></h2>
                 <div class="row gap-xs">
                     <button on:click={move |_| show_add.set(true)} class="btn secondary row p-xs">
