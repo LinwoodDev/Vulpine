@@ -26,6 +26,7 @@
   },
   "bundle": {
     "active": true,
+    "shortDescription": "Linwood Vulpine",
     "targets": "all",
     "icon": [
       "icons/32x32.png",

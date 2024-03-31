@@ -1,6 +1,8 @@
+mod actions;
 mod commands;
+mod fs;
 
-use commands::fs::*;
+use commands::*;
 
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 #[tauri::command]
@@ -13,7 +15,11 @@ pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_shell::init())
         .invoke_handler(tauri::generate_handler![
-            greet, get_apps, update_app, get_app, delete_app,
+            greet, get_apps, 
+            // FS commands
+            update_app, get_app, delete_app,
+            // Action commands
+            get_namespaces, get_actions
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

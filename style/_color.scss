@@ -1,0 +1,27 @@
+$colors: (
+  "white": #ffffff,
+  "pink": #e91e63,
+  "red": #ff1744,
+  "orange": #ff9100,
+  "yellow": #ffeb3b,
+  "green": #4caf50,
+  "blue": #2196f3,
+  "purple": #9c27b0,
+  "black": #000000,
+);
+
+// Add css classes for each color fill
+@each $color, $value in $colors {
+  .bg-#{$color} {
+    background-color: $value;
+  }
+  .color-#{$color} {
+    color: $value;
+  }
+  .fill-#{$color} {
+    fill: $value;
+  }
+  .stroke-#{$color} {
+    stroke: $value;
+  }
+}

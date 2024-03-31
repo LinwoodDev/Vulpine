@@ -1,5 +1,5 @@
-use std::collections::HashMap;
 use indexmap::IndexMap;
+use std::collections::HashMap;
 
 use serde::{Deserialize, Serialize};
 
@@ -18,12 +18,11 @@ pub struct VulpineResource {
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
-pub enum VulpineStep {
-    Command {
-        executable: String,
-        args: Vec<HashMap<String, ValueMapping>>,
-        env: HashMap<String, ValueMapping>,
-    }
+pub struct VulpineStep {
+    namespace: String,
+    function: String,
+    args: HashMap<String, String>,
+    outputs: HashMap<String, Vec<String>>,
 }
 
 #[derive(Debug, Serialize, Deserialize, Default, Clone, PartialEq)]
@@ -35,9 +34,10 @@ pub struct VulpineAction {
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 pub enum ActionInput {
-    Checkbox {
-        label: String,
-    }
+    Checkbox { label: Option<String> },
+    Text { label: Option<String> },
+    Number { label: Option<String> },
+    Select { label: Option<String>, options: Vec<String> },
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
@@ -48,7 +48,7 @@ pub enum ValueMapping {
     Input {
         input: String,
         mapping: HashMap<String, String>,
-    }
+    },
 }
 
 #[derive(Serialize, Deserialize)]
@@ -76,5 +76,8 @@ impl AppName {
 const ALLOWED_SPECIAL_CHARS: &str = "_- ";
 
 pub fn safe_filename(name: &str) -> String {
-    name.trim().replace(|c: char| !c.is_ascii_alphanumeric() && !ALLOWED_SPECIAL_CHARS.contains(c), "")
+    name.trim().replace(
+        |c: char| !c.is_ascii_alphanumeric() && !ALLOWED_SPECIAL_CHARS.contains(c),
+        "",
+    )
 }
