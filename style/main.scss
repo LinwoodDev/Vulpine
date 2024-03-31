@@ -1,5 +1,7 @@
 @use "../node_modules/@linwooddev/style/scss/main.scss";
 @forward "window";
+@forward "color";
+@forward "component";
 @forward "input";
 @forward "layout";
 @forward "typo";

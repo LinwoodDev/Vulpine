@@ -19,6 +19,10 @@ impl ThemeColor {
         let name: &'static str = self.into();
         format!("fill-{}", name.to_lowercase())
     }
+    pub fn to_bg_class(&self) -> String {
+        let name: &'static str = self.into();
+        format!("bg-{}", name.to_lowercase())
+    }
 }
 
 pub fn get_color_from_namespace(namespace: &str) -> ThemeColor {

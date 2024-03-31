@@ -1,3 +1,5 @@
 /src
 /public
+/node_modules
+/.vscode
 /Cargo.toml

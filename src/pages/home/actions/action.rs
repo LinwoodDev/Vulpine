@@ -1,4 +1,5 @@
-use crate::components::graph::{GraphEdge, GraphNode, GraphView};
+use crate::components::graph::{GraphEdge, GraphNode, GraphPipe, GraphView, PipeDirection};
+use crate::utils::color::ThemeColor;
 use leptos::logging::log;
 use leptos::*;
 use shared::models::app::VulpineAction;
@@ -25,14 +26,41 @@ pub fn ActionDialog(
                 id: n.len().to_string(),
                 x,
                 y,
-                pipes: Vec::new(),
+                pipes: vec! [
+                    GraphPipe {
+                        id: "0".to_string(),
+                        name: "input".to_string(),
+                        direction: PipeDirection::Input,
+                        color: ThemeColor::Yellow,
+                    },
+                    GraphPipe {
+                        id: "0".to_string(),
+                        name: "output".to_string(),
+                        direction: PipeDirection::Output,
+                        color: ThemeColor::Purple,
+                    },
+                    GraphPipe {
+                        id: "0".to_string(),
+                        name: "both".to_string(),
+                        direction: PipeDirection::Both,
+                        color: ThemeColor::Blue,
+                    },
+                ],
             });
+        });
+    };
+    let on_node_move = move |(id, x, y)| {
+        nodes.update(|n| {
+            if let Some(node) = n.iter_mut().find(|n| n.id == id) {
+                node.x = x;
+                node.y = y;
+            }
         });
     };
 
     view! {
         <Show when={move || action.get().is_some()}>
-            <div class="fullscreen col gap-sm">
+            <div class="fullscreen col gap-sm layout-container">
                 <div class="row align-center gap-sm card paper pv-xs ph-md">
                     <h2 class="flex mp-none">
                         "Edit action"
@@ -41,19 +69,19 @@ pub fn ActionDialog(
                         <i class="ph-light ph-x text-icon"/>
                     </button>
                 </div>
-                <div class="flex row align-stretch">
-                    <div class="min-w-md card paper">
+                <div class="flex sidebar-layout">
+                    <div class="min-w-sm card paper">
                         <h2>"Add"</h2>
                         <button class="card primary" on:click=add_node>
                             "Node"
                         </button>
                     </div>
-                    <div class="flex card paper">
+                    <div class="flex card paper min-w-ws min-h-md">
                         <GraphView nodes edges build_node={|e| {
                             view! {
-                                <p>{format!("{:?}", e)}</p>
+                                <p class="w-md">{format!("{:?}", e)}</p>
                             }
-                        }} current_position=current_position />
+                        }} current_position on_node_move />
                     </div>
                 </div>
             </div>
