@@ -32,7 +32,12 @@ html, body {
 }
 .btn.close {
   --ls-primary: #ff3b30;
-}
-.btn.square-top-right {
-  border-top-right-radius: 0;
+  &::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    top: 0;
+  }
 }

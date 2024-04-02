@@ -1,4 +1,4 @@
-use shared::models::{action::ConnectorType, color::RgbColor};
+use shared::models::action::ConnectorType;
 use strum::{EnumString, IntoStaticStr};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, EnumString, IntoStaticStr)]

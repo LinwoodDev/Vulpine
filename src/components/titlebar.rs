@@ -102,7 +102,7 @@ pub fn Titlebar() -> impl IntoView {
             <div class="btn secondary p-xs" id="titlebar-maximize" on:click=on_maximize>
               <i class="ph-light ph-square text-icon" />
             </div>
-            <div class="btn square-top-right secondary close p-xs" id="titlebar-close" on:click=on_close>
+            <div class="btn secondary close p-xs" id="titlebar-close" on:click=on_close>
               <i class="ph-light ph-x text-icon" />
             </div>
           </div>
