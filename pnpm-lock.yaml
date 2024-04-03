@@ -12,8 +12,8 @@ dependencies:
     specifier: ^0.3.9
     version: 0.3.9
   '@phosphor-icons/web':
-    specifier: ^2.0.3
-    version: 2.0.3
+    specifier: ^2.1.1
+    version: 2.1.1
   sass:
     specifier: ^1.72.0
     version: 1.72.0
@@ -41,8 +41,8 @@ packages:
     resolution: {integrity: sha512-UljR1p05aoVaf7rw7qLaeFlfPUZbw+NDKPo7qbCJRZr8p+r87Q17Ah1mUK1dl/sdpzkgg3Rz/H3vwfKw+9l8kw==}
     dev: false
 
-  /@phosphor-icons/web@2.0.3:
-    resolution: {integrity: sha512-9oYmohi2fo87w3DbtfjBoJxrklVojgXq2wuGcqxKccj2TxMq7UIusKDrGUZYOQHM9pUKkh+kvfmutETMGDR6gg==}
+  /@phosphor-icons/web@2.1.1:
+    resolution: {integrity: sha512-QjrfbItu5Rb2i37GzsKxmrRHfZPTVk3oXSPBnQ2+oACDbQRWGAeB0AsvZw263n1nFouQuff+khOCtRbrc6+k+A==}
     dev: false
 
   /anymatch@3.1.3:

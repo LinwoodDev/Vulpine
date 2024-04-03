@@ -1,4 +1,4 @@
-use leptos::{logging::log, *};
+use leptos::{html::Div, logging::log, *};
 use web_sys::PointerEvent;
 
 use crate::utils::color::ThemeColor;
@@ -39,8 +39,8 @@ pub struct CurrentConnection {
     pub from: String,
     pub from_pipe: Option<String>,
     pub is_input: bool,
-    pub from_position: (i32, i32),
-    pub current_position: (i32, i32),
+    pub from_position: (f64, f64),
+    pub current_position: Option<(f64, f64)>,
 }
 
 #[component]
@@ -55,38 +55,40 @@ where
     FN: Fn(&GraphNode) -> N + 'static,
     N: IntoView + 'static,
 {
+    let canvas_ref: NodeRef<Div> = create_node_ref();
+    let local_to_global = move |x: i32, y: i32| {
+        let Some(element) = canvas_ref.get() else {
+            return (x as f64, y as f64);
+        };
+        let rect = element.get_bounding_client_rect();
+        (
+            x as f64 - rect.left(),
+            y as f64 - rect.top(),
+        )
+    };
+    let get_path = move |(x1, y1): (f64, f64), (x2, y2): (f64, f64)| {
+        let ctrl_x1 = x1 + (x2 - x1) / 4.0;
+        let ctrl_y1 = y1;
+        let ctrl_x2 = x1 + 3.0 * (x2 - x1) / 4.0;
+        let ctrl_y2 = y2;
+        format!("M {} {} C {} {} {} {} {} {}", x1, y1, ctrl_x1, ctrl_y1, ctrl_x2, ctrl_y2, x2, y2)
+    };
     let dragging_id = create_rw_signal::<Option<String>>(None);
     let dragging_start = create_rw_signal::<Option<(i32, i32)>>(None);
     let current_connection = create_rw_signal::<Option<CurrentConnection>>(None);
     let on_down = move |e: PointerEvent| {
-        if dragging_id.get_untracked().is_some() || current_connection.get_untracked().is_some() {
-            return;
-        }
+        if dragging_id.get_untracked().is_some() {}
         e.prevent_default();
         let last = current_position.get_untracked();
         dragging_start.set(Some((last.0 + e.page_x(), e.page_y() + last.1)));
     };
     let up_handle = window_event_listener(ev::pointerup, move |e| {
         e.prevent_default();
-        current_connection.set(None);
+        //current_connection.set(None);
         dragging_start.set(None);
         dragging_id.set(None);
     });
     let move_handle = window_event_listener(ev::pointermove, move |e| {
-        let offset_x = e.page_x();
-        let offset_y = e.page_y();
-        if current_connection.get_untracked().is_some() {
-            current_connection.update(|f| {
-                let Some(o) = f.as_mut() else {
-                    return;
-                };
-                o.current_position = (
-                    o.current_position.0 - offset_x,
-                    o.current_position.1 - offset_y,
-                );
-            });
-            return;
-        }
         let start = dragging_start.get_untracked();
         let Some((start_x, start_y)) = start else {
             return;
@@ -96,6 +98,19 @@ where
         let offset_y = e.page_y();
         let x = start_x - offset_x;
         let y = start_y - offset_y;
+        if current_connection.get_untracked().is_some() {
+            current_connection.update(|f| {
+                let Some(o) = f.as_mut() else {
+                    return;
+                };
+                let mouse_pos = local_to_global(
+                    e.page_x(),
+                    e.page_y(),
+                );
+                o.current_position = Some(mouse_pos);
+            });
+            return;
+        }
         let Some(dragging_id) = dragging_id.get_untracked() else {
             current_position.update(|last| {
                 last.0 = x;
@@ -120,7 +135,7 @@ where
                 <rect width="100%" height="100%" fill="url(#background-pattern)" />
             </svg>
             <div class="absolute-full no-overflow">
-                    <div style={move || {
+                    <div _ref=canvas_ref style={move || {
                         let pos = current_position.get();
                         format!("transform: translate({}px, {}px);", -pos.0, -pos.1)
                     }} class="w-full h-full">
@@ -137,12 +152,11 @@ where
                             };
                             let change_current_connection = move |e: PointerEvent, pipe: Option<GraphPipe>, is_input: bool| {
                                 log!("Current connection change");
-                                let pos = current_position.get_untracked();
-                                let mouse_pos = (e.client_x() + pos.0, e.client_y() + pos.1);
+                                let mouse_pos = local_to_global(e.page_x(), e.page_y());
                                 current_connection.set(Some(CurrentConnection {
                                     from_pipe: pipe.map(|e| e.id),
                                     from: id.get_value().clone(),
-                                    current_position: mouse_pos,
+                                    current_position: None,
                                     from_position: mouse_pos,
                                     is_input
                                 }));
@@ -178,8 +192,11 @@ where
                                 let Some(con) = current_connection.get() else {
                                     return "".to_owned();
                                 };
-                                format!("M {} {} L {} {}", con.from_position.0, con.from_position.1, con.current_position.0, con.current_position.1)
-                            }} stroke="white" />
+                                let Some(current) = con.current_position else {
+                                    return "".to_owned();
+                                };
+                                get_path(con.from_position, current)
+                            }} stroke="white" fill="transparent" />
                         </svg>
                     </div>
             </div>
