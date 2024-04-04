@@ -65,7 +65,7 @@ where
     let canvas_ref: NodeRef<Div> = create_node_ref();
     let pipe_positions =
         create_rw_signal::<HashMap<(String, String), ((f64, f64), (f64, f64))>>(HashMap::new());
-    let context = provide_context(GraphContext { pipe_positions });
+    provide_context(GraphContext { pipe_positions });
     let local_to_global = move |x: i32, y: i32| {
         let Some(element) = canvas_ref.get() else {
             return (x as f64, y as f64);
@@ -87,10 +87,17 @@ where
     let dragging_start = create_rw_signal::<Option<(i32, i32)>>(None);
     let current_connection = create_rw_signal::<Option<CurrentConnection>>(None);
     let on_down = move |e: PointerEvent| {
-        if dragging_id.get_untracked().is_some() {}
         e.prevent_default();
         let last = current_position.get_untracked();
-        dragging_start.set(Some((last.0 + e.page_x(), e.page_y() + last.1)));
+        let pos = (last.0 + e.page_x(), e.page_y() + last.1);
+        dragging_start.update(|e| {
+            let Some(e) = e else {
+                *e = Some(pos);
+                return;
+            };
+            e.0 += pos.0;
+            e.1 += pos.1;
+        });
     };
     let up_handle = window_event_listener(ev::pointerup, move |e| {
         e.prevent_default();
@@ -164,7 +171,8 @@ where
                                 if current_connection.get_untracked().is_some() {
                                     return;
                                 }
-                                let start = (e.page_x() -node.x, e.page_y()-node.y);
+                                let current_position = current_position.get();
+                                let start = (-node.x - current_position.0, -node.y -current_position.1);
                                 dragging_start.set(Some(start));
                                 dragging_id.set(Some(id.get_value().clone()));
                             };
@@ -280,7 +288,12 @@ fn GraphPipe(
             node_ref
                 .get()
                 .map(|f| f.get_bounding_client_rect())
-                .map(|r| (r.x() + r.width() / 2_f64 - node_position.0, r.y() + r.height() / 2_f64- node_position.1))
+                .map(|r| {
+                    (
+                        r.x() + r.width() / 2_f64 - node_position.0,
+                        r.y() + r.height() / 2_f64 - node_position.1,
+                    )
+                })
                 .unwrap_or_default()
         };
         let input_pos = get_center(&input_ref);

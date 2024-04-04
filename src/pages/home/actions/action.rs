@@ -23,6 +23,16 @@ pub fn ActionDialog(
             let (x, y) = current_position.get_untracked();
             log!("Node added at {}, {}", x, y);
             let id = n.len().to_string();
+            if !n.is_empty() {
+                edges.update(|e| {
+                    e.push(GraphEdge {
+                        from: "0".to_string(),
+                        from_pipe: "0".to_string(),
+                        to: id.to_string(),
+                        to_pipe: "0".to_string()
+                    });
+                });
+            }
             n.push(GraphNode {
                 id: id.to_string(),
                 x,
@@ -48,16 +58,6 @@ pub fn ActionDialog(
                     },
                 ],
             });
-            if !n.is_empty() {
-                edges.update(|e| {
-                    e.push(GraphEdge {
-                        from: "0".to_string(),
-                        from_pipe: "0".to_string(),
-                        to: id.to_string(),
-                        to_pipe: "0".to_string()
-                    });
-                });
-            }
         });
     };
     let on_node_move = move |(id, x, y)| {
