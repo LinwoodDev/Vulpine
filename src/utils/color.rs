@@ -25,6 +25,7 @@ impl ThemeColor {
     }
 }
 
+#[allow(unused)]
 pub fn get_color_from_namespace(namespace: &str) -> ThemeColor {
     match namespace {
         "string" => ThemeColor::Purple,
@@ -37,6 +38,7 @@ pub fn get_color_from_namespace(namespace: &str) -> ThemeColor {
     }
 }
 
+#[allow(unused)]
 pub fn get_color_from_type(ty: ConnectorType) -> ThemeColor {
     match ty {
         ConnectorType::String => ThemeColor::Purple,

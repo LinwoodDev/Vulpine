@@ -27,7 +27,7 @@ pub fn ActionDialog(
                 edges.update(|e| {
                     e.push(GraphEdge {
                         from: "0".to_string(),
-                        from_pipe: "0".to_string(),
+                        from_pipe: "1".to_string(),
                         to: id.to_string(),
                         to_pipe: "0".to_string()
                     });
@@ -45,13 +45,13 @@ pub fn ActionDialog(
                         color: ThemeColor::Yellow,
                     },
                     GraphPipe {
-                        id: "0".to_string(),
+                        id: "1".to_string(),
                         name: "output".to_string(),
                         direction: PipeDirection::Output,
                         color: ThemeColor::Purple,
                     },
                     GraphPipe {
-                        id: "0".to_string(),
+                        id: "2".to_string(),
                         name: "both".to_string(),
                         direction: PipeDirection::Both,
                         color: ThemeColor::Blue,

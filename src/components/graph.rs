@@ -39,7 +39,7 @@ pub struct GraphEdge {
 #[derive(Debug, Clone)]
 pub struct CurrentConnection {
     pub from: String,
-    pub from_pipe: Option<String>,
+    pub from_pipe: String,
     pub is_input: bool,
     pub from_position: (f64, f64),
     pub current_position: Option<(f64, f64)>,
@@ -57,6 +57,7 @@ pub fn GraphView<FN, N>(
     build_node: FN,
     current_position: RwSignal<(i32, i32)>,
     #[prop(into, optional)] on_node_move: Option<Callback<(String, i32, i32)>>,
+    #[prop(into, optional)] on_edge_add: Option<Callback<((String, String), (String, String))>>,
 ) -> impl IntoView
 where
     FN: Fn(&GraphNode) -> N + 'static,
@@ -101,7 +102,20 @@ where
     };
     let up_handle = window_event_listener(ev::pointerup, move |e| {
         e.prevent_default();
-        //current_connection.set(None);
+        if let Some(con) = current_connection.get_untracked() {
+            on_edge_add.map(|f| {
+                let mut first = (con.from.to_string(), con.from_pipe.to_string());
+                let mut second = (con.from.to_string(), con.from_pipe.to_string());
+                if con.is_input {
+                    (first, second) = (second, first);
+                }
+                f.call((
+                    first,
+                    second,
+                ))
+            });
+        }
+        current_connection.set(None);
         dragging_start.set(None);
         dragging_id.set(None);
     });
@@ -176,11 +190,11 @@ where
                                 dragging_start.set(Some(start));
                                 dragging_id.set(Some(id.get_value().clone()));
                             };
-                            let change_current_connection = move |e: PointerEvent, pipe: Option<GraphPipe>, is_input: bool| {
+                            let change_current_connection = move |e: PointerEvent, pipe: &GraphPipe, is_input: bool| {
                                 log!("Current connection change");
                                 let mouse_pos = local_to_global(e.page_x(), e.page_y());
                                 current_connection.set(Some(CurrentConnection {
-                                    from_pipe: pipe.map(|e| e.id),
+                                    from_pipe: pipe.id.to_string(),
                                     from: id.get_value().clone(),
                                     current_position: None,
                                     from_position: mouse_pos,
@@ -200,10 +214,10 @@ where
                                             let pipe = store_value(pipe);
                                             let change_current_connection = store_value(change_current_connection);
                                             let on_input_down = move |e: PointerEvent| {
-                                                change_current_connection.get_value()(e, Some(pipe.get_value()), true);
+                                                change_current_connection.get_value()(e, &pipe.get_value(), true);
                                             };
                                             let on_output_down = move |e: PointerEvent| {
-                                                change_current_connection.get_value()(e, Some(pipe.get_value()), false);
+                                                change_current_connection.get_value()(e, &pipe.get_value(), false);
                                             };
                                             view! {
                                                 <GraphPipe node_position id=id.get_value() pipe=pipe.get_value() on_input_down=on_input_down on_output_down=on_output_down />
@@ -213,7 +227,7 @@ where
                                 </div>
                             }
                         } />
-                        <svg width="100%" height="100%">
+                        <svg width="100%" height="100%" style="overflow: visible">
                             <path d={move || {
                                 let Some(con) = current_connection.get() else {
                                     return "".to_owned();
