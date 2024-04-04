@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use leptos::{html::Div, logging::log, *};
 use web_sys::PointerEvent;
 
@@ -29,9 +31,9 @@ pub enum PipeDirection {
 #[derive(Debug, Clone)]
 pub struct GraphEdge {
     pub from: String,
-    pub from_pipe: Option<String>,
+    pub from_pipe: String,
     pub to: String,
-    pub to_pipe: Option<String>,
+    pub to_pipe: String,
 }
 
 #[derive(Debug, Clone)]
@@ -41,6 +43,11 @@ pub struct CurrentConnection {
     pub is_input: bool,
     pub from_position: (f64, f64),
     pub current_position: Option<(f64, f64)>,
+}
+
+#[derive(Clone, Default)]
+struct GraphContext {
+    pub pipe_positions: RwSignal<HashMap<(String, String), ((f64, f64), (f64, f64))>>,
 }
 
 #[component]
@@ -56,22 +63,25 @@ where
     N: IntoView + 'static,
 {
     let canvas_ref: NodeRef<Div> = create_node_ref();
+    let pipe_positions =
+        create_rw_signal::<HashMap<(String, String), ((f64, f64), (f64, f64))>>(HashMap::new());
+    let context = provide_context(GraphContext { pipe_positions });
     let local_to_global = move |x: i32, y: i32| {
         let Some(element) = canvas_ref.get() else {
             return (x as f64, y as f64);
         };
         let rect = element.get_bounding_client_rect();
-        (
-            x as f64 - rect.left(),
-            y as f64 - rect.top(),
-        )
+        (x as f64 - rect.left(), y as f64 - rect.top())
     };
     let get_path = move |(x1, y1): (f64, f64), (x2, y2): (f64, f64)| {
         let ctrl_x1 = x1 + (x2 - x1) / 4.0;
         let ctrl_y1 = y1;
         let ctrl_x2 = x1 + 3.0 * (x2 - x1) / 4.0;
         let ctrl_y2 = y2;
-        format!("M {} {} C {} {} {} {} {} {}", x1, y1, ctrl_x1, ctrl_y1, ctrl_x2, ctrl_y2, x2, y2)
+        format!(
+            "M {} {} C {} {} {} {} {} {}",
+            x1, y1, ctrl_x1, ctrl_y1, ctrl_x2, ctrl_y2, x2, y2
+        )
     };
     let dragging_id = create_rw_signal::<Option<String>>(None);
     let dragging_start = create_rw_signal::<Option<(i32, i32)>>(None);
@@ -103,10 +113,7 @@ where
                 let Some(o) = f.as_mut() else {
                     return;
                 };
-                let mouse_pos = local_to_global(
-                    e.page_x(),
-                    e.page_y(),
-                );
+                let mouse_pos = local_to_global(e.page_x(), e.page_y());
                 o.current_position = Some(mouse_pos);
             });
             return;
@@ -180,7 +187,7 @@ where
                                                 change_current_connection.get_value()(e, Some(pipe.get_value()), false);
                                             };
                                             view! {
-                                                <GraphPipe pipe=pipe.get_value() on_input_down=on_input_down on_output_down=on_output_down />
+                                                <GraphPipe id=id.get_value() pipe=pipe.get_value() on_input_down=on_input_down on_output_down=on_output_down />
                                             }
                                         }/>
                                     </div>
@@ -197,6 +204,33 @@ where
                                 };
                                 get_path(con.from_position, current)
                             }} stroke="white" fill="transparent" />
+                            <For each={move || edges.get()} key={|e| format!("{:?}", e)} children=move |edge| {
+                                let edge = store_value(edge);
+                                let get_pos = move |from: bool| {
+                                    let pipe_positions = pipe_positions.get();
+                                    let edge = edge.get_value();
+                                    let key = if from {
+                                        (edge.from, edge.from_pipe)
+                                    } else {
+                                        (edge.to, edge.to_pipe)
+                                    };
+                                    let entry = pipe_positions.get(&key);
+                                    entry.map(|e| if from {
+                                        e.0
+                                    } else { e.1 })
+                                };
+                                view! {
+                                    <path d={move || {
+                                        let Some(start_pos) = get_pos(true) else {
+                                            return "".to_owned();
+                                        };
+                                        let Some(end_pos) = get_pos(false) else {
+                                            return "".to_owned();
+                                        };
+                                        get_path(start_pos, end_pos)
+                                    }} stroke="white" fill="transparent" />
+                                }
+                            } />
                         </svg>
                     </div>
             </div>
@@ -205,11 +239,14 @@ where
 }
 
 #[component]
-pub fn GraphPipe(
+fn GraphPipe(
+    #[prop(into)] id: String,
     pipe: GraphPipe,
     #[prop(into)] on_input_down: Callback<PointerEvent>,
     #[prop(into)] on_output_down: Callback<PointerEvent>,
 ) -> impl IntoView {
+    let input_ref: NodeRef<Div> = create_node_ref();
+    let output_ref: NodeRef<Div> = create_node_ref();
     let bg_class = store_value(pipe.color.to_bg_class());
     let direction = store_value(pipe.direction.clone());
     let input_down = move |e| {
@@ -222,11 +259,31 @@ pub fn GraphPipe(
             on_output_down.call(e);
         }
     };
+    create_effect(move |_| {
+        let Some(context) = use_context::<GraphContext>() else {
+            return;
+        };
+        let get_center = |node_ref: &NodeRef<Div>| {
+            node_ref
+                .get()
+                .map(|f| f.get_bounding_client_rect())
+                .map(|r| (r.left() + r.width() / 2_f64, r.top() + r.height() / 2_f64))
+                .unwrap_or_default()
+        };
+        let input_pos = get_center(&input_ref);
+        let output_pos = get_center(&output_ref);
+        context.pipe_positions.update(|l| {
+            l.insert(
+                (id.to_string(), pipe.id.to_string()),
+                (input_pos, output_pos),
+            );
+        });
+    });
     view! {
         <div class="row gap-xs align-center justify-between">
-            <div on:pointerdown=input_down class={move || format!("m-sm dot {}", if direction.get_value() == PipeDirection::Output { "".to_owned() } else { bg_class.get_value().clone() })} />
+            <div _ref={input_ref} on:pointerdown=input_down class={move || format!("m-sm dot {}", if direction.get_value() == PipeDirection::Output { "".to_owned() } else { bg_class.get_value().clone() })} />
             <p>{pipe.name}</p>
-            <div on:pointerdown=output_down class={move || format!("m-sm dot {}", if direction.get_value() == PipeDirection::Input { "".to_owned() } else { bg_class.get_value().clone() })} />
+            <div _ref={output_ref} on:pointerdown=output_down class={move || format!("m-sm dot {}", if direction.get_value() == PipeDirection::Input { "".to_owned() } else { bg_class.get_value().clone() })} />
         </div>
     }
 }
