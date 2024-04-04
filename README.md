@@ -32,11 +32,13 @@ Vulpine helps you to visualize and interact with command line tools. It is a sim
 
 ## Features
 
-* Create apps with a simple wizard
+* Create app configuration files inside the app
+  * You can also edit them with your favorite text editor
+* Create complex actions using a visual scripting editor
 * Run apps with a single click
 * Add input fields to apps
 * Share apps with others
-* Cross platform on windows, linux and macos
+* Cross platform on windows, linux and macos (mobile and web in the future)
 
 ## Getting started
 

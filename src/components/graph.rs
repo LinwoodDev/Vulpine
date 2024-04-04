@@ -148,6 +148,17 @@ where
                     }} class="w-full h-full">
                         <For each={move || nodes.get()} key={|e| format!("{:?}", e)} children=move |node| {
                             let id = store_value(node.id.clone());
+                            let node_ref : NodeRef<Div> = create_node_ref();
+                            let node_position = create_memo(move |_| {
+                                let Some(node_ref) = node_ref.get() else {
+                                    return (0_f64, 0_f64);
+                                };
+                                let rect = node_ref.get_bounding_client_rect();
+                                (
+                                    rect.x() - node.x as f64,
+                                    rect.y() - node.y as f64
+                                )
+                            });
                             let on_node_down = move |e: PointerEvent| {
                                 e.prevent_default();
                                 if current_connection.get_untracked().is_some() {
@@ -170,7 +181,7 @@ where
                             };
                             let pipes = store_value(node.pipes.clone());
                             view! {
-                                <div class="card paper w-max gap-none" style={move || format!("position: absolute; left: {}px; top: {}px;", node.x, node.y)} on:pointerdown=on_node_down>
+                                <div _ref=node_ref class="card paper w-max gap-none" style={move || format!("position: absolute; left: {}px; top: {}px;", node.x, node.y)} on:pointerdown=on_node_down>
                                     {build_node(&node)}
                                     <hr />
                                     <div class="col">
@@ -187,7 +198,7 @@ where
                                                 change_current_connection.get_value()(e, Some(pipe.get_value()), false);
                                             };
                                             view! {
-                                                <GraphPipe id=id.get_value() pipe=pipe.get_value() on_input_down=on_input_down on_output_down=on_output_down />
+                                                <GraphPipe node_position id=id.get_value() pipe=pipe.get_value() on_input_down=on_input_down on_output_down=on_output_down />
                                             }
                                         }/>
                                     </div>
@@ -216,8 +227,8 @@ where
                                     };
                                     let entry = pipe_positions.get(&key);
                                     entry.map(|e| if from {
-                                        e.0
-                                    } else { e.1 })
+                                        e.1
+                                    } else { e.0 })
                                 };
                                 view! {
                                     <path d={move || {
@@ -241,6 +252,7 @@ where
 #[component]
 fn GraphPipe(
     #[prop(into)] id: String,
+    #[prop(into)] node_position: Signal<(f64, f64)>,
     pipe: GraphPipe,
     #[prop(into)] on_input_down: Callback<PointerEvent>,
     #[prop(into)] on_output_down: Callback<PointerEvent>,
@@ -263,11 +275,12 @@ fn GraphPipe(
         let Some(context) = use_context::<GraphContext>() else {
             return;
         };
+        let node_position = node_position.get();
         let get_center = |node_ref: &NodeRef<Div>| {
             node_ref
                 .get()
                 .map(|f| f.get_bounding_client_rect())
-                .map(|r| (r.left() + r.width() / 2_f64, r.top() + r.height() / 2_f64))
+                .map(|r| (r.x() + r.width() / 2_f64 - node_position.0, r.y() + r.height() / 2_f64- node_position.1))
                 .unwrap_or_default()
         };
         let input_pos = get_center(&input_ref);
