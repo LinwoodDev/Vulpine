@@ -68,6 +68,16 @@ pub fn ActionDialog(
             }
         });
     };
+    let on_edge_add = move |((from, from_pipe),(to, to_pipe))| {
+        edges.update(|e| {
+            let edge = GraphEdge { from, from_pipe, to, to_pipe };
+            let Some(already_added) = e.iter().position(|c| c == &edge) else {
+                e.push(edge);
+                return;
+            };
+            e.remove(already_added);
+        });
+    };
 
     view! {
         <Show when={move || action.get().is_some()}>
@@ -92,7 +102,7 @@ pub fn ActionDialog(
                             view! {
                                 <p class="w-md">{format!("{:?}", e)}</p>
                             }
-                        }} current_position on_node_move />
+                        }} current_position on_node_move on_edge_add />
                     </div>
                 </div>
             </div>

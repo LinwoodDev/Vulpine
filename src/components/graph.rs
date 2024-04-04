@@ -28,7 +28,7 @@ pub enum PipeDirection {
     Both,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct GraphEdge {
     pub from: String,
     pub from_pipe: String,
@@ -48,6 +48,12 @@ pub struct CurrentConnection {
 #[derive(Clone, Default)]
 struct GraphContext {
     pub pipe_positions: RwSignal<HashMap<(String, String), ((f64, f64), (f64, f64))>>,
+}
+
+const DOT_SIZE: f64 = 16_f64;
+
+fn is_near_dot((x1, y1): (f64, f64), (x2, y2): (f64, f64)) -> bool {
+    (x1 - x2).abs() <= DOT_SIZE && (y1 - y2).abs() <= DOT_SIZE
 }
 
 #[component]
@@ -105,14 +111,20 @@ where
         if let Some(con) = current_connection.get_untracked() {
             on_edge_add.map(|f| {
                 let mut first = (con.from.to_string(), con.from_pipe.to_string());
-                let mut second = (con.from.to_string(), con.from_pipe.to_string());
+                let Some(mut second) = ({
+                    let pipe_positions = pipe_positions.get();
+                    let Some(mouse) = con.current_position else {
+                        return;
+                    };
+                    let entry = pipe_positions.iter().find(|(_, e)| is_near_dot(e.0,mouse)|| is_near_dot(e.1,mouse));
+                    entry.map(|e| (e.0.0.to_string(), e.0.1.to_string()))
+                }) else {
+                    return;
+                };
                 if con.is_input {
                     (first, second) = (second, first);
                 }
-                f.call((
-                    first,
-                    second,
-                ))
+                f.call((first, second))
             });
         }
         current_connection.set(None);
