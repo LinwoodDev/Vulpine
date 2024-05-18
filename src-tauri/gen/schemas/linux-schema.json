@@ -110,7 +110,7 @@
       ],
       "properties": {
         "urls": {
-          "description": "Remote domains this capability refers to using the [URLPattern standard](https://urlpattern.spec.whatwg.org/).",
+          "description": "Remote domains this capability refers to using the [URLPattern standard](https://urlpattern.spec.whatwg.org/).\n\n# Examples\n\n- \"https://*.mydomain.dev\": allows subdomains of mydomain.dev - \"https://mydomain.dev/api/*\": allows any subpath of mydomain.dev/api",
           "type": "array",
           "items": {
             "type": "string"
@@ -142,6 +142,12 @@
                 "identifier": {
                   "oneOf": [
                     {
+                      "type": "string",
+                      "enum": [
+                        "shell:default"
+                      ]
+                    },
+                    {
                       "description": "shell:allow-execute -> Enables the execute command without any pre-configured scope.",
                       "type": "string",
                       "enum": [
@@ -160,6 +166,13 @@
                       "type": "string",
                       "enum": [
                         "shell:allow-open"
+                      ]
+                    },
+                    {
+                      "description": "shell:allow-spawn -> Enables the spawn command without any pre-configured scope.",
+                      "type": "string",
+                      "enum": [
+                        "shell:allow-spawn"
                       ]
                     },
                     {
@@ -191,6 +204,13 @@
                       ]
                     },
                     {
+                      "description": "shell:deny-spawn -> Denies the spawn command without any pre-configured scope.",
+                      "type": "string",
+                      "enum": [
+                        "shell:deny-spawn"
+                      ]
+                    },
+                    {
                       "description": "shell:deny-stdin-write -> Denies the stdin_write command without any pre-configured scope.",
                       "type": "string",
                       "enum": [
@@ -206,7 +226,7 @@
                     "type": "object",
                     "required": [
                       "args",
-                      "command",
+                      "cmd",
                       "name",
                       "sidecar"
                     ],
@@ -219,7 +239,7 @@
                           }
                         ]
                       },
-                      "command": {
+                      "cmd": {
                         "description": "The command name. It can start with a variable that resolves to a system base directory. The variables are: `$AUDIO`, `$CACHE`, `$CONFIG`, `$DATA`, `$LOCALDATA`, `$DESKTOP`, `$DOCUMENT`, `$DOWNLOAD`, `$EXE`, `$FONT`, `$HOME`, `$PICTURE`, `$PUBLIC`, `$RUNTIME`, `$TEMPLATE`, `$VIDEO`, `$RESOURCE`, `$APP`, `$LOG`, `$TEMP`, `$APPCONFIG`, `$APPDATA`, `$APPLOCALDATA`, `$APPCACHE`, `$APPLOG`.",
                         "type": "string"
                       },
@@ -241,7 +261,7 @@
                     "type": "object",
                     "required": [
                       "args",
-                      "command",
+                      "cmd",
                       "name",
                       "sidecar"
                     ],
@@ -254,7 +274,7 @@
                           }
                         ]
                       },
-                      "command": {
+                      "cmd": {
                         "description": "The command name. It can start with a variable that resolves to a system base directory. The variables are: `$AUDIO`, `$CACHE`, `$CONFIG`, `$DATA`, `$LOCALDATA`, `$DESKTOP`, `$DOCUMENT`, `$DOWNLOAD`, `$EXE`, `$FONT`, `$HOME`, `$PICTURE`, `$PUBLIC`, `$RUNTIME`, `$TEMPLATE`, `$VIDEO`, `$RESOURCE`, `$APP`, `$LOG`, `$TEMP`, `$APPCONFIG`, `$APPDATA`, `$APPLOCALDATA`, `$APPCACHE`, `$APPLOG`.",
                         "type": "string"
                       },
@@ -432,31 +452,10 @@
           ]
         },
         {
-          "description": "image:allow-from-ico-bytes -> Enables the from_ico_bytes command without any pre-configured scope.",
-          "type": "string",
-          "enum": [
-            "image:allow-from-ico-bytes"
-          ]
-        },
-        {
           "description": "image:allow-from-path -> Enables the from_path command without any pre-configured scope.",
           "type": "string",
           "enum": [
             "image:allow-from-path"
-          ]
-        },
-        {
-          "description": "image:allow-from-png-bytes -> Enables the from_png_bytes command without any pre-configured scope.",
-          "type": "string",
-          "enum": [
-            "image:allow-from-png-bytes"
-          ]
-        },
-        {
-          "description": "image:allow-height -> Enables the height command without any pre-configured scope.",
-          "type": "string",
-          "enum": [
-            "image:allow-height"
           ]
         },
         {
@@ -474,10 +473,10 @@
           ]
         },
         {
-          "description": "image:allow-width -> Enables the width command without any pre-configured scope.",
+          "description": "image:allow-size -> Enables the size command without any pre-configured scope.",
           "type": "string",
           "enum": [
-            "image:allow-width"
+            "image:allow-size"
           ]
         },
         {
@@ -488,31 +487,10 @@
           ]
         },
         {
-          "description": "image:deny-from-ico-bytes -> Denies the from_ico_bytes command without any pre-configured scope.",
-          "type": "string",
-          "enum": [
-            "image:deny-from-ico-bytes"
-          ]
-        },
-        {
           "description": "image:deny-from-path -> Denies the from_path command without any pre-configured scope.",
           "type": "string",
           "enum": [
             "image:deny-from-path"
-          ]
-        },
-        {
-          "description": "image:deny-from-png-bytes -> Denies the from_png_bytes command without any pre-configured scope.",
-          "type": "string",
-          "enum": [
-            "image:deny-from-png-bytes"
-          ]
-        },
-        {
-          "description": "image:deny-height -> Denies the height command without any pre-configured scope.",
-          "type": "string",
-          "enum": [
-            "image:deny-height"
           ]
         },
         {
@@ -530,10 +508,10 @@
           ]
         },
         {
-          "description": "image:deny-width -> Denies the width command without any pre-configured scope.",
+          "description": "image:deny-size -> Denies the size command without any pre-configured scope.",
           "type": "string",
           "enum": [
-            "image:deny-width"
+            "image:deny-size"
           ]
         },
         {
@@ -992,6 +970,12 @@
           ]
         },
         {
+          "type": "string",
+          "enum": [
+            "shell:default"
+          ]
+        },
+        {
           "description": "shell:allow-execute -> Enables the execute command without any pre-configured scope.",
           "type": "string",
           "enum": [
@@ -1010,6 +994,13 @@
           "type": "string",
           "enum": [
             "shell:allow-open"
+          ]
+        },
+        {
+          "description": "shell:allow-spawn -> Enables the spawn command without any pre-configured scope.",
+          "type": "string",
+          "enum": [
+            "shell:allow-spawn"
           ]
         },
         {
@@ -1041,6 +1032,13 @@
           ]
         },
         {
+          "description": "shell:deny-spawn -> Denies the spawn command without any pre-configured scope.",
+          "type": "string",
+          "enum": [
+            "shell:deny-spawn"
+          ]
+        },
+        {
           "description": "shell:deny-stdin-write -> Denies the stdin_write command without any pre-configured scope.",
           "type": "string",
           "enum": [
@@ -1055,10 +1053,24 @@
           ]
         },
         {
+          "description": "tray:allow-get-by-id -> Enables the get_by_id command without any pre-configured scope.",
+          "type": "string",
+          "enum": [
+            "tray:allow-get-by-id"
+          ]
+        },
+        {
           "description": "tray:allow-new -> Enables the new command without any pre-configured scope.",
           "type": "string",
           "enum": [
             "tray:allow-new"
+          ]
+        },
+        {
+          "description": "tray:allow-remove-by-id -> Enables the remove_by_id command without any pre-configured scope.",
+          "type": "string",
+          "enum": [
+            "tray:allow-remove-by-id"
           ]
         },
         {
@@ -1118,10 +1130,24 @@
           ]
         },
         {
+          "description": "tray:deny-get-by-id -> Denies the get_by_id command without any pre-configured scope.",
+          "type": "string",
+          "enum": [
+            "tray:deny-get-by-id"
+          ]
+        },
+        {
           "description": "tray:deny-new -> Denies the new command without any pre-configured scope.",
           "type": "string",
           "enum": [
             "tray:deny-new"
+          ]
+        },
+        {
+          "description": "tray:deny-remove-by-id -> Denies the remove_by_id command without any pre-configured scope.",
+          "type": "string",
+          "enum": [
+            "tray:deny-remove-by-id"
           ]
         },
         {
@@ -1244,6 +1270,13 @@
           ]
         },
         {
+          "description": "webview:allow-set-webview-zoom -> Enables the set_webview_zoom command without any pre-configured scope.",
+          "type": "string",
+          "enum": [
+            "webview:allow-set-webview-zoom"
+          ]
+        },
+        {
           "description": "webview:allow-webview-close -> Enables the webview_close command without any pre-configured scope.",
           "type": "string",
           "enum": [
@@ -1321,6 +1354,13 @@
           ]
         },
         {
+          "description": "webview:deny-set-webview-zoom -> Denies the set_webview_zoom command without any pre-configured scope.",
+          "type": "string",
+          "enum": [
+            "webview:deny-set-webview-zoom"
+          ]
+        },
+        {
           "description": "webview:deny-webview-close -> Denies the webview_close command without any pre-configured scope.",
           "type": "string",
           "enum": [
@@ -1381,6 +1421,13 @@
           "type": "string",
           "enum": [
             "window:allow-current-monitor"
+          ]
+        },
+        {
+          "description": "window:allow-cursor-position -> Enables the cursor_position command without any pre-configured scope.",
+          "type": "string",
+          "enum": [
+            "window:allow-cursor-position"
           ]
         },
         {
@@ -1734,6 +1781,13 @@
           ]
         },
         {
+          "description": "window:allow-start-resize-dragging -> Enables the start_resize_dragging command without any pre-configured scope.",
+          "type": "string",
+          "enum": [
+            "window:allow-start-resize-dragging"
+          ]
+        },
+        {
           "description": "window:allow-theme -> Enables the theme command without any pre-configured scope.",
           "type": "string",
           "enum": [
@@ -1801,6 +1855,13 @@
           "type": "string",
           "enum": [
             "window:deny-current-monitor"
+          ]
+        },
+        {
+          "description": "window:deny-cursor-position -> Denies the cursor_position command without any pre-configured scope.",
+          "type": "string",
+          "enum": [
+            "window:deny-cursor-position"
           ]
         },
         {
@@ -2151,6 +2212,13 @@
           "type": "string",
           "enum": [
             "window:deny-start-dragging"
+          ]
+        },
+        {
+          "description": "window:deny-start-resize-dragging -> Denies the start_resize_dragging command without any pre-configured scope.",
+          "type": "string",
+          "enum": [
+            "window:deny-start-resize-dragging"
           ]
         },
         {
