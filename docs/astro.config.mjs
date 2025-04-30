@@ -41,7 +41,6 @@ export default defineConfig({
           items: [
             // Each item here is one entry in the navigation menu.
             { label: "Introduction", slug: "docs/v1/intro" },
-            { label: "API", slug: "docs/v1/api" },
           ],
         },
         {

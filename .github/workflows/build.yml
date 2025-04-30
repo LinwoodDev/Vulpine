@@ -33,13 +33,6 @@ jobs:
           flutter clean
           flutter pub get
           flutter doctor -v
-      - name: Build nessesary files
-        working-directory: ./
-        run: |
-          cd tools
-          dart pub get
-          cd ..
-          dart run tools/generate.dart
       - name: Import files
         if: ${{ github.event_name != 'pull_request' }}
         env:
@@ -116,13 +109,6 @@ jobs:
           flutter clean
           flutter pub get
           flutter doctor -v
-      - name: Build nessesary files
-        working-directory: ./
-        run: |
-          cd tools
-          dart pub get
-          cd ..
-          dart run tools/generate.dart
       - name: 🏭 Build nightly
         if: ${{ github.ref != 'refs/tags/stable' && (github.event_name != 'release' || github.event.release.prerelease) }}
         run: |
@@ -213,13 +199,6 @@ jobs:
           flutter clean
           flutter doctor -v
           flutter pub get
-      - name: Build nessesary files
-        working-directory: ./
-        run: |
-          cd tools
-          dart pub get
-          cd ..
-          dart run tools/generate.dart
       - name: 🏭 Build nightly
         if: ${{ github.ref != 'refs/tags/stable' && (github.event_name != 'release' || github.event.release.prerelease) }}
         run: |
@@ -254,7 +233,7 @@ jobs:
           appimage-builder --recipe AppImageBuilder.yml --skip-test
       - name: Copy nessessary files
         run: |
-          cp assets/images/logo.svg build/linux/${{ matrix.arch.dir }}/release/bundle/dev.linwood.vulpine.svg
+          cp images/logo.svg build/linux/${{ matrix.arch.dir }}/release/bundle/dev.linwood.vulpine.svg
           mkdir -p build/linux/${{ matrix.arch.dir }}/release/bundle/usr/share
           cp -r linux/debian/usr/share build/linux/${{ matrix.arch.dir }}/release/bundle/usr
       - name: Rename AppImage
@@ -349,13 +328,6 @@ jobs:
           flutter clean
           flutter pub get
           flutter doctor -v
-      - name: Build nessesary files
-        working-directory: ./
-        run: |
-          cd tools
-          dart pub get
-          cd ..
-          dart run tools/generate.dart
       - name: 🏭 Build nightly
         if: ${{ github.ref != 'refs/tags/stable' && (github.event_name != 'release' || github.event.release.prerelease) }}
         run: |
@@ -368,7 +340,7 @@ jobs:
           flutter build linux -v --release --dart-define=flavor=production
       - name: Copy nessessary files
         run: |
-          cp assets/images/logo.svg build/linux/${{ matrix.arch.dir }}/release/bundle/dev.linwood.vulpine.svg
+          cp images/logo.svg build/linux/${{ matrix.arch.dir }}/release/bundle/dev.linwood.vulpine.svg
           mkdir -p build/linux/${{ matrix.arch.dir }}/release/bundle/usr/share
           cp -r linux/debian/usr/share build/linux/${{ matrix.arch.dir }}/release/bundle/usr
       - name: Compress Flutter build
@@ -387,7 +359,7 @@ jobs:
       #        flatpak run org.flatpak.Builder -v --force-clean --sandbox --delete-build-dirs --user --install-deps-from=flathub --arch=x86_64 flatpak_app flatpak.json --bundle-sources
       #        flatpak build-export export flatpak_app -v
       #        flatpak build-bundle export linwood-vulpine-linux.flatpak dev.linwood.vulpine -v
-      #    - name: Upload .flatpak artifact to workflow
+      #    - name: Upload .flatpak artifact to workvulpine
       #      uses: actions/upload-artifact@v4
       #      with:
       #        name: linux-flatpak
@@ -418,13 +390,6 @@ jobs:
           flutter clean
           flutter pub get
           flutter doctor -v
-      - name: Build nessesary files
-        working-directory: ./
-        run: |
-          cd tools
-          dart pub get
-          cd ..
-          dart run tools/generate.dart
       - name: 🏭 Build
         run: |
           flutter build macos -v --release
@@ -472,13 +437,6 @@ jobs:
           flutter clean
           flutter pub get
           flutter doctor -v
-      - name: Build nessesary files
-        working-directory: ./
-        run: |
-          cd tools
-          dart pub get
-          cd ..
-          dart run tools/generate.dart
       - name: 🏭 Build
         run: |
           flutter build ios --release --no-codesign -v
@@ -518,73 +476,6 @@ jobs:
   #       with:
   #         name: vulpine-snap
   #         path: ${{ steps.build.outputs.snap }}
-  build-server:
-    defaults:
-      run:
-        working-directory: server
-    strategy:
-      matrix:
-        os:
-          - name: ubuntu-24.04
-            label: linux-x86_64
-            rust: libvulpine_plugin.so
-          - name: ubuntu-24.04-arm
-            label: linux-arm64
-            rust: libvulpine_plugin.so
-          - name: windows-2025
-            label: windows-x86_64
-            rust: vulpine_plugin.dll
-          - name: macos-latest
-            label: macos
-            rust: libvulpine_plugin.dylib
-    runs-on: ${{ matrix.os.name }}
-    steps:
-      - name: ⬆️ Checkout
-        uses: actions/checkout@v4
-      - name: Install yq
-        if: ${{ matrix.os.name == 'windows-2025' }}
-        run: choco install yq
-      - uses: subosito/flutter-action@v2.19.0
-        with:
-          flutter-version-file: app/pubspec.yaml
-          channel: 'master'
-          cache: true
-          cache-key: 'flutter-:os:-:channel:-:version:-:arch:-:hash:'
-          cache-path: '${{ runner.tool_cache }}/flutter/:channel:-:version:-:arch:'
-      - name: 📦 Get dependencies
-        run: |
-          flutter clean
-          flutter pub get
-          flutter doctor -v
-      - name: Compile rust
-        working-directory: plugin/rust
-        run: |
-          cargo build --release
-      - name: Compile
-        run: |
-          dart compile exe bin/vulpine_server.dart
-      - name: Create directory
-        run: |
-          mkdir -p server-build
-          mv bin/vulpine_server.exe server-build/
-          mkdir -p server-build/packs
-      - name: Move rust lib
-        working-directory: ./
-        run: |
-          cp plugin/rust/target/release/${{ matrix.os.rust }} server/server-build/
-      - name: Build nessesary files
-        working-directory: ./
-        run: |
-          cd tools
-          dart pub get
-          cd ..
-          dart run tools/generate.dart
-          cp app/assets/pack.stnx server/server-build/packs/.stnx
-      - name: Archive
-        uses: actions/upload-artifact@v4
-        with:
-          name: server-build-${{ matrix.os.label }}
-          path: server/server-build
   deploy:
     runs-on: ubuntu-24.04
     if: github.event_name != 'pull_request'
@@ -598,7 +489,6 @@ jobs:
       - build-flatpak
       - build-macos
       - build-ipa
-      - build-server
     steps:
       - name: ⬆️ Checkout
         uses: actions/checkout@v4
@@ -678,22 +568,6 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: ipa-build
-      - uses: actions/download-artifact@v4
-        with:
-          name: server-build-linux-x86_64
-          path: server-build-linux-x86_64/
-      - uses: actions/download-artifact@v4
-        with:
-          name: server-build-linux-arm64
-          path: server-build-linux-arm64/
-      - uses: actions/download-artifact@v4
-        with:
-          name: server-build-windows-x86_64
-          path: server-build-windows-x86_64/
-      - uses: actions/download-artifact@v4
-        with:
-          name: server-build-macos
-          path: server-build-macos/
       - name: 📦 Zip artifacts
         run: |
           cd windows-build
@@ -701,12 +575,8 @@ jobs:
           cd ..
           tar -C linux-x86_64-build -czf linwood-vulpine-linux-x86_64.tar.gz .
           tar -C linux-arm64-build -czf linwood-vulpine-linux-arm64.tar.gz .
-          zip -r linwood-vulpine-server-windows-x86_64.zip server-build-windows-x86_64/*
           tar -C linux-x86_64-alternative-build -czf linwood-vulpine-linux-alternative-x86_64.tar.gz .
           tar -C linux-arm64-alternative-build -czf linwood-vulpine-linux-alternative-arm64.tar.gz .
-          tar -C server-build-linux-x86_64 -czf linwood-vulpine-server-linux-x86_64.tar.gz .
-          tar -C server-build-linux-arm64 -czf linwood-vulpine-server-linux-arm64.tar.gz .
-          zip -r linwood-vulpine-server-macos.zip server-build-macos/*
       - name: Configure git
         if: ${{ github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/main' }}
         run: |
@@ -757,10 +627,6 @@ jobs:
             linwood-vulpine-android-arm64.apk
             linwood-vulpine-android-x86_64.apk
             linwood-vulpine-ios.ipa
-            linwood-vulpine-server-linux-x86_64.tar.gz
-            linwood-vulpine-server-linux-arm64.tar.gz
-            linwood-vulpine-server-windows-x86_64.zip
-            linwood-vulpine-server-macos.zip
             checksums.txt
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -790,10 +656,6 @@ jobs:
             linwood-vulpine-android-arm64.apk
             linwood-vulpine-android-x86_64.apk
             linwood-vulpine-ios.ipa
-            linwood-vulpine-server-linux-x86_64.tar.gz
-            linwood-vulpine-server-linux-arm64.tar.gz
-            linwood-vulpine-server-windows-x86_64.zip
-            linwood-vulpine-server-macos.zip
             checksums.txt
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -821,10 +683,6 @@ jobs:
             linwood-vulpine-android-arm64.apk
             linwood-vulpine-android-x86_64.apk
             linwood-vulpine-ios.ipa
-            linwood-vulpine-server-linux-x86_64.tar.gz
-            linwood-vulpine-server-linux-arm64.tar.gz
-            linwood-vulpine-server-windows-x86_64.zip
-            linwood-vulpine-server-macos.zip
             checksums.txt
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -864,13 +722,6 @@ jobs:
       - uses: subosito/flutter-action@v2.19.0
         with:
           flutter-version-file: app/pubspec.yaml
-      - name: Build nessesary files
-        working-directory: ./
-        run: |
-          cd tools
-          dart pub get
-          cd ..
-          dart run tools/generate.dart
       - name: 📦 Get dependencies
         run: |
           flutter pub get

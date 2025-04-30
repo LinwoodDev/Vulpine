@@ -41,37 +41,7 @@ jobs:
           chmod 600 sftp_key
           echo "$SFTP_KNOWN_HOSTS" > known_hosts
           chmod 600 known_hosts
-          rsync -avz --delete -e "ssh -i sftp_key -o UserKnownHostsFile=known_hosts" dist/ $SFTP_USERNAME@$SFTP_HOST:/var/www/www.vulpine
-  doc:
-    runs-on: ubuntu-24.04
-    defaults:
-      run:
-        working-directory: server
-    steps:
-      - name: ⬆️ Checkout
-        uses: actions/checkout@v4
-      - uses: subosito/flutter-action@v2.19.0
-        with:
-          flutter-version-file: app/pubspec.yaml
-      - name: Install dependencies
-        run: |
-          flutter pub get
-      - name: Generate documentation
-        run: |
-          dart doc
-      - name: Deploy to SFTP
-        if: github.ref == 'refs/heads/develop'
-        env:
-          SFTP_HOST: ${{ secrets.SFTP_HOST }}
-          SFTP_USERNAME: ${{ secrets.SFTP_USERNAME }}
-          SFTP_KEY: ${{ secrets.SFTP_KEY }}
-          SFTP_KNOWN_HOSTS: ${{secrets.SFTP_KNOWN_HOSTS}}
-        run: |
-          echo "$SFTP_KEY" > sftp_key
-          chmod 600 sftp_key
-          echo "$SFTP_KNOWN_HOSTS" > known_hosts
-          chmod 600 known_hosts
-          rsync -avz --delete -e "ssh -i sftp_key -o UserKnownHostsFile=known_hosts" doc/api/ $SFTP_USERNAME@$SFTP_HOST:/var/www/api.vulpine
+          rsync -avz --delete -e "ssh -i sftp_key -o UserKnownHostsFile=known_hosts" dist/ $SFTP_USERNAME@$SFTP_HOST:/var/www/vulpine.linwood
   web:
     runs-on: ubuntu-24.04
     defaults:
@@ -86,12 +56,6 @@ jobs:
       - name: Install dependencies
         run: |
           flutter pub get
-      - name: Generate
-        run: |
-          cd ../tools
-          dart pub get
-          cd ..
-          dart run tools/generate.dart
       - name: Set flavor
         if: github.ref != 'refs/heads/main'
         run: |
@@ -116,4 +80,4 @@ jobs:
           chmod 600 sftp_key
           echo "$SFTP_KNOWN_HOSTS" > known_hosts
           chmod 600 known_hosts
-          rsync -avz --delete -e "ssh -i sftp_key -o UserKnownHostsFile=known_hosts" build/web/ $SFTP_USERNAME@$SFTP_HOST:/var/www/$WEB_DIR.vulpine
+          rsync -avz --delete -e "ssh -i sftp_key -o UserKnownHostsFile=known_hosts" build/web/ $SFTP_USERNAME@$SFTP_HOST:/var/www/$WEB_DIR.vulpine.linwood

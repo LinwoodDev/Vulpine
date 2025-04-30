@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="https://raw.githubusercontent.com/LinwoodDev/Vulpine/app/images/logo.png" width="350px" />
+<img src="https://raw.githubusercontent.com/LinwoodDev/Vulpine/refs/heads/develop/app/images/logo.png" width="350px" />
 
 # Vulpine
 

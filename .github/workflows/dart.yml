@@ -8,7 +8,7 @@ jobs:
     continue-on-error: true
     strategy:
       matrix:
-        projects: [app, api, plugin, server, tools]
+        projects: [app, api, tools]
     defaults:
       run:
         working-directory: ${{ matrix.projects }}
@@ -23,13 +23,6 @@ jobs:
         run: |
           dart --version
           flutter --version
-      - name: Run generate
-        working-directory: ./
-        run: |
-          cd tools
-          dart pub get
-          cd ..
-          dart run tools/generate.dart
       - name: Install dependencies
         run: |
           flutter pub get
@@ -38,13 +31,6 @@ jobs:
         run: |
           flutter gen-l10n
           dart format lib/src/generated
-      - name: Install app specific dependencies
-        if: matrix.projects == 'app'
-        run: |
-          cd rust_builder
-          flutter pub get
-          cd cargokit/build_tool
-          flutter pub get
       # Uncomment this step to verify the use of 'dart format' on each commit.
       - name: Verify formatting
         run: dart format --output=none --set-exit-if-changed .
@@ -52,13 +38,8 @@ jobs:
       - name: Analyze project source
         run: |
           flutter analyze --fatal-infos
-      - name: Build flutter_rust_bridge bindings
-        if: matrix.projects == 'plugin'
-        run: |
-          cargo install flutter_rust_bridge_codegen@2.9.0
-          flutter_rust_bridge_codegen generate
       - name: Run build_runner
-        if: matrix.projects == 'api' || matrix.projects == 'app'
+        if: matrix.projects != 'tools'
         run: dart run build_runner build --delete-conflicting-outputs
       - name: Test for git changes
         run: git diff --exit-code
