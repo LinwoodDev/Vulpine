@@ -34,7 +34,9 @@ Vulpine helps you to visualize and interact with command line tools. It is a sim
 
 * Create app configuration files inside the app
   * You can also edit them with your favorite text editor
-* Create complex actions using a visual scripting editor
+* Create complex actions using a domain specific language (DSL)
+  * The DSL is a simple and easy to use language that allows you to create complex actions with ease
+  * The DSL is designed to be easy to read and write, even for non-programmers
 * Run apps with a single click
 * Add input fields to apps
 * Share apps with others

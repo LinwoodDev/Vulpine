@@ -29,12 +29,39 @@ android {
         versionCode = flutter.versionCode
         versionName = flutter.versionName
     }
-
+    productFlavors { 
+        production {
+            dimension "default"
+            applicationIdSuffix ""
+            manifestPlaceholders = [appName: "Vulpine"]
+        }
+        development {
+            dimension "default"
+            applicationIdSuffix ""
+            manifestPlaceholders = [appName: "Vulpine Nightly"]
+        }
+        nightly {
+            dimension "default"
+            applicationIdSuffix ".nightly"
+            manifestPlaceholders = [appName: "Vulpine Nightly"]
+        }
+    }
+    signingConfigs {
+        release {
+            keyAlias keystoreProperties['keyAlias']
+            keyPassword keystoreProperties['keyPassword']
+            storeFile keystoreProperties['storeFile'] ? file(keystoreProperties['storeFile']) : null
+            storePassword keystoreProperties['storePassword']
+        }
+    }
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
             // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.getByName("debug")
+            if (keystorePropertiesFile.exists()) {
+                signingConfig signingConfigs.release
+            } else {
+                signingConfig signingConfigs.debug
+            }
         }
     }
 }

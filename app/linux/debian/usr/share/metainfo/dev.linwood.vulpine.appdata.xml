@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+	<id>dev.linwood.vulpine</id>
+	<name>Linwood Vulpine</name>
+	<developer_name>Linwood</developer_name>
+	<summary>A user friendly gui for command line tools</summary>
+	<metadata_license>CC0-1.0</metadata_license>
+	<project_license>AGPL-3.0-only</project_license>
+	<recommends>
+		<control>pointing</control>
+		<control>keyboard</control>
+		<control>touch</control>
+	</recommends>
+	<branding>
+		<color type="primary" scheme_preference="light">#f4d890</color>
+		<color type="primary" scheme_preference="dark">#4b3807</color>
+	</branding>
+	<url type="homepage">https://vulpine.linwood.dev/</url>
+	<url type="bugtracker">https://github.com/LinwoodDev/Vulpine/issues</url>
+	<url type="help">https://vulpine.linwood.dev/docs/latest/intro</url>
+	<url type="translate">https://linwood.dev/vulpine/crowdin</url>
+	<url type="vcs-browser">https://github.com/LinwoodDev/Vulpine.git</url>
+	<url type="contribute">https://github.com/LinwoodDev/Vulpine/blob/develop/CONTRIBUTING.md</url>
+	<description>
+		<p>Vulpine helps you to visualize and interact with command line tools. It is a simple and user cross-platform, opensource app built with tauri and rust.</p>
+		<p>Features:</p>
+		<ul>
+			<li>Create app configuration files inside the app</li>
+			<li>Create complex actions using a domain specific language</li>
+			<li>Run apps with a single click</li>
+			<li>Add input fields to apps</li>
+			<li>Share apps with others</li>
+			<li>Cross platform on windows, linux and macos (mobile and web in the future)</li>
+		</ul>
+	</description>
+	<screenshots>
+		<screenshot type="default">
+			<image type="source">
+				https://raw.githubusercontent.com/LinwoodDev/Butterfly/6ef60df743398c2aeb64495a83406983122be2f6/docs/src/assets/img/main.png</image>
+			<caption>Main draw view</caption>
+		</screenshot>
+		<screenshot>
+			<image type="source">
+				https://raw.githubusercontent.com/LinwoodDev/Butterfly/a60131c05bd9b7691d022c25dda9cdd76670e003/docs/src/assets/img/home.png</image>
+			<caption>Home view</caption>
+		</screenshot>
+	</screenshots>
+	<launchable type="desktop-id">dev.linwood.vulpine.desktop</launchable>
+	<releases>
+	</releases>
+	<content_rating type="oars-1.1" />
+	<update_contact>contact@linwood.dev</update_contact>
+</component>

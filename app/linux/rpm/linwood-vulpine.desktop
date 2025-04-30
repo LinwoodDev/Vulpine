@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Linwood Vulpine
+Comment=A user friendly gui for command line tools
+Exec=/usr/bin/linwood-vulpine %f
+Icon=/usr/share/linwood-vulpine/data/flutter_assets/images/logo.svg
+Terminal=false
+Type=Application
+Categories=Office;

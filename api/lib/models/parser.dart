@@ -216,20 +216,14 @@ class DslGrammarDefinition extends GrammarDefinition<VulpineDSL> {
   ).map3((l, name, r) => VulpineDSLVariableStringPart(name));
 
   Parser<EqualityOperator> equalityOperator() =>
-      [
-        string('==').map((_) => EqualityOperator.equal),
-        string('!=').map((_) => EqualityOperator.notEqual),
-        string('>').map((_) => EqualityOperator.greaterThan),
-        string('<').map((_) => EqualityOperator.lessThan),
-        string('>=').map((_) => EqualityOperator.greaterThanOrEqual),
-        string('<=').map((_) => EqualityOperator.lessThanOrEqual),
-      ].toChoiceParser();
+      EqualityOperator.values
+          .map((e) => string(e.symbol).map((_) => e))
+          .toChoiceParser();
 
   Parser<LogicalOperator> logicalOperator() =>
-      [
-        string('&&').map((_) => LogicalOperator.and),
-        string('||').map((_) => LogicalOperator.or),
-      ].toChoiceParser();
+      LogicalOperator.values
+          .map((e) => string(e.symbol).map((_) => e))
+          .toChoiceParser();
 
   Parser<VulpineDSLCondition> condition() => seq3(
     char('('),

@@ -1,0 +1,9 @@
+Package: linwood-vulpine
+Version: 0.1.0
+Section: base
+Priority: optional
+Homepage: https://github.com/LinwoodDev/Vulpine
+Architecture: amd64
+Maintainer: Linwood <contact@linwood.dev>
+Description: Linwood Vulpine
+  Vulpine helps you to visualize and interact with command line tools. It is a simple and user cross-platform, opensource app built with tauri and rust.
