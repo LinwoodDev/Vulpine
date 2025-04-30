@@ -1,0 +1,20 @@
+name: vulpine_tools
+environment:
+  sdk: ">=2.13.0 <3.0.0"
+dependencies:
+  archive: ^4.0.1
+  args: ^2.5.0
+  lints: ^5.0.0
+  shelf: ^1.4.1
+  shelf_proxy: ^1.0.4
+  shelf_static: ^1.1.2
+  shelf_web_socket: ^3.0.0
+  web_socket_channel: ^3.0.0
+  yaml: ^3.1.2
+  generate_leap:
+    git:
+      url: https://github.com/LinwoodDev/dart_pkgs
+      ref: 6b88b03823624f9b0537bc34a15b1cdaa0b3774d
+      path: packages/generate_leap
+dev_dependencies:
+  intl: ^0.20.1

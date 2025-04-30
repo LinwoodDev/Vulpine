@@ -1,0 +1,29 @@
+---
+title: Linux
+---
+
+![Nightly release version](https://img.shields.io/badge/dynamic/yaml?color=1CC637&label=Nightly&query=%24.version&url=https%3A%2F%2Fraw.githubusercontent.com%2FLinwoodDev%2FVulpine%2Fnightly%2Fserver%2Fpubspec.yaml&style=for-the-badge)
+
+
+import {CardGrid, LinkCard, TabItem, Tabs} from '@astrojs/starlight/components';
+import DownloadButton from '/src/components/DownloadButton.astro';
+
+:::note
+
+Please use the flatpak version if possible.
+Otherwise you need to install `libsecret-1-dev` and `libjsoncpp-dev`.
+
+:::
+
+## Binaries
+
+<Tabs>
+<TabItem label="Nightly">
+  <CardGrid>
+    <DownloadButton href="https://github.com/LinwoodDev/Vulpine/releases/download/nightly/linwood-vulpine-server-linux-x86_64.tar.gz" title="Server (x86_64)"/>
+    <DownloadButton href="https://github.com/LinwoodDev/Vulpine/releases/download/nightly/linwood-vulpine-server-linux-arm64.tar.gz" title="Server (ARM64)"/>
+  </CardGrid>
+</TabItem>
+</Tabs>
+
+Read more about the nightly version of Vulpine [here](/community/nightly).

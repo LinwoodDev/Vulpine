@@ -1,0 +1,36 @@
+---
+title: Linwood Vulpine
+description: Library for Universal Networking Assets
+template: splash
+hero:
+  tagline: Library for Universal Networking Assets
+  image:
+    file: /public/logo.svg
+  actions:
+    - text: Download
+      link: /downloads/
+      icon: download
+      variant: primary
+    - text: Getting started
+      link: /docs/v1/intro/
+      icon: document
+---
+
+import { LinkCard, Card, CardGrid } from '@astrojs/starlight/components';
+
+## Principles
+
+<CardGrid stagger>
+	<Card title="Statically generated" icon="laptop">
+		You can host the library on any static hosting provider.
+	</Card>
+	<Card title="Universal" icon="puzzle">
+		The library system can be used by any type of assets and can be adjusted to your needs.
+	</Card>
+	<Card title="Simple Interface" icon="pencil">
+		You can use the docs subcommand to generate a frontend documentation for the repository.
+	</Card>
+	<Card title="Open Format" icon="open-book">
+		Generated files are in json and are documented.
+	</Card>
+</CardGrid>

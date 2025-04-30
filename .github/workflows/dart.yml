@@ -1,0 +1,69 @@
+name: Dart
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    continue-on-error: true
+    strategy:
+      matrix:
+        projects: [app, api, plugin, server, tools]
+    defaults:
+      run:
+        working-directory: ${{ matrix.projects }}
+    steps:
+      - name: ⬆️ Checkout
+        uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2.19.0
+        with:
+          flutter-version-file: app/pubspec.yaml
+      - uses: actions/checkout@v4
+      - name: Print Dart SDK version
+        run: |
+          dart --version
+          flutter --version
+      - name: Run generate
+        working-directory: ./
+        run: |
+          cd tools
+          dart pub get
+          cd ..
+          dart run tools/generate.dart
+      - name: Install dependencies
+        run: |
+          flutter pub get
+      - name: Run flutter gen-l10n
+        if: matrix.projects == 'app'
+        run: |
+          flutter gen-l10n
+          dart format lib/src/generated
+      - name: Install app specific dependencies
+        if: matrix.projects == 'app'
+        run: |
+          cd rust_builder
+          flutter pub get
+          cd cargokit/build_tool
+          flutter pub get
+      # Uncomment this step to verify the use of 'dart format' on each commit.
+      - name: Verify formatting
+        run: dart format --output=none --set-exit-if-changed .
+      # Consider passing '--fatal-infos' for slightly stricter analysis.
+      - name: Analyze project source
+        run: |
+          flutter analyze --fatal-infos
+      - name: Build flutter_rust_bridge bindings
+        if: matrix.projects == 'plugin'
+        run: |
+          cargo install flutter_rust_bridge_codegen@2.9.0
+          flutter_rust_bridge_codegen generate
+      - name: Run build_runner
+        if: matrix.projects == 'api' || matrix.projects == 'app'
+        run: dart run build_runner build --delete-conflicting-outputs
+      - name: Test for git changes
+        run: git diff --exit-code
+      # Your project will need to have tests in test/ and a dependency on
+      # package:test for this step to succeed. Note that Flutter projects will
+      # want to change this to 'flutter test'.
+      # - name: Run tests
+      #   run: flutter test
