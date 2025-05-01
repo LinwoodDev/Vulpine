@@ -1,8 +1,17 @@
+import java.io.FileInputStream
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     id("kotlin-android")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
+}
+
+val keystoreProperties = Properties()
+val keystorePropertiesFile = rootProject.file("key.properties")
+if (keystorePropertiesFile.exists()) {
+    FileInputStream(keystorePropertiesFile).use { keystoreProperties.load(it) }
 }
 
 android {
@@ -20,47 +29,48 @@ android {
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId = "dev.linwood.vulpine"
-        // You can update the following values to match your application needs.
-        // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
     }
-    productFlavors { 
-        production {
-            dimension "default"
-            applicationIdSuffix ""
-            manifestPlaceholders = [appName: "Vulpine"]
+
+    flavorDimensions += "default"
+    productFlavors {
+        create("production") {
+            dimension = "default"
+            applicationIdSuffix = ""
+            manifestPlaceholders["appName"] = "Vulpine"
         }
-        development {
-            dimension "default"
-            applicationIdSuffix ""
-            manifestPlaceholders = [appName: "Vulpine Nightly"]
+        create("development") {
+            dimension = "default"
+            applicationIdSuffix = ""
+            manifestPlaceholders["appName"] = "Vulpine Nightly"
         }
-        nightly {
-            dimension "default"
-            applicationIdSuffix ".nightly"
-            manifestPlaceholders = [appName: "Vulpine Nightly"]
+        create("nightly") {
+            dimension = "default"
+            applicationIdSuffix = ".nightly"
+            manifestPlaceholders["appName"] = "Vulpine Nightly"
         }
     }
+
     signingConfigs {
-        release {
-            keyAlias keystoreProperties['keyAlias']
-            keyPassword keystoreProperties['keyPassword']
-            storeFile keystoreProperties['storeFile'] ? file(keystoreProperties['storeFile']) : null
-            storePassword keystoreProperties['storePassword']
+        create("release") {
+            keyAlias = keystoreProperties["keyAlias"] as String?
+            keyPassword = keystoreProperties["keyPassword"] as String?
+            storeFile = keystoreProperties["storeFile"]?.let { file(it as String) }
+            storePassword = keystoreProperties["storePassword"] as String?
         }
     }
+
     buildTypes {
-        release {
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            if (keystorePropertiesFile.exists()) {
-                signingConfig signingConfigs.release
+        getByName("release") {
+            // Use your release keystore if available, fall back to debug key
+            signingConfig = if (keystorePropertiesFile.exists()) {
+                signingConfigs.getByName("release")
             } else {
-                signingConfig signingConfigs.debug
+                signingConfigs.getByName("debug")
             }
         }
     }
