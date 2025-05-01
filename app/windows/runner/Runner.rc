@@ -90,12 +90,12 @@ BEGIN
         BLOCK "040904e4"
         BEGIN
             VALUE "CompanyName", "dev.linwood" "\0"
-            VALUE "FileDescription", "vulpine" "\0"
+            VALUE "FileDescription", "Linwood Vulpine" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "vulpine" "\0"
-            VALUE "LegalCopyright", "Copyright (C) 2025 dev.linwood. All rights reserved." "\0"
+            VALUE "InternalName", "Linwood Vulpine" "\0"
+            VALUE "LegalCopyright", "Copyright (C) 2022 Linwood. Licensed under AGPL-3.0-only." "\0"
             VALUE "OriginalFilename", "vulpine.exe" "\0"
-            VALUE "ProductName", "vulpine" "\0"
+            VALUE "ProductName", "Linwood Vulpine" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

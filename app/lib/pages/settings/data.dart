@@ -19,9 +19,7 @@ class DataSettingsPage extends StatelessWidget {
         title: Text(AppLocalizations.of(context).data),
       ),
       body: BlocBuilder<SettingsCubit, VulpineSettings>(
-        builder: (context, state) => ListView(children: [
-              ],
-            ),
+        builder: (context, state) => ListView(children: []),
       ),
     );
   }
