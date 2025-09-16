@@ -85,23 +85,47 @@ class VulpineSettingsMapper extends ClassMapperBase<VulpineSettings> {
   final String id = 'VulpineSettings';
 
   static String _$locale(VulpineSettings v) => v.locale;
-  static const Field<VulpineSettings, String> _f$locale =
-      Field('locale', _$locale, opt: true, def: '');
+  static const Field<VulpineSettings, String> _f$locale = Field(
+    'locale',
+    _$locale,
+    opt: true,
+    def: '',
+  );
   static ThemeMode _$themeMode(VulpineSettings v) => v.themeMode;
-  static const Field<VulpineSettings, ThemeMode> _f$themeMode =
-      Field('themeMode', _$themeMode, opt: true, def: ThemeMode.system);
+  static const Field<VulpineSettings, ThemeMode> _f$themeMode = Field(
+    'themeMode',
+    _$themeMode,
+    opt: true,
+    def: ThemeMode.system,
+  );
   static bool _$nativeTitleBar(VulpineSettings v) => v.nativeTitleBar;
-  static const Field<VulpineSettings, bool> _f$nativeTitleBar =
-      Field('nativeTitleBar', _$nativeTitleBar, opt: true, def: false);
+  static const Field<VulpineSettings, bool> _f$nativeTitleBar = Field(
+    'nativeTitleBar',
+    _$nativeTitleBar,
+    opt: true,
+    def: false,
+  );
   static String _$design(VulpineSettings v) => v.design;
-  static const Field<VulpineSettings, String> _f$design =
-      Field('design', _$design, opt: true, def: '');
+  static const Field<VulpineSettings, String> _f$design = Field(
+    'design',
+    _$design,
+    opt: true,
+    def: '',
+  );
   static ThemeDensity _$density(VulpineSettings v) => v.density;
-  static const Field<VulpineSettings, ThemeDensity> _f$density =
-      Field('density', _$density, opt: true, def: ThemeDensity.system);
+  static const Field<VulpineSettings, ThemeDensity> _f$density = Field(
+    'density',
+    _$density,
+    opt: true,
+    def: ThemeDensity.system,
+  );
   static bool _$highContrast(VulpineSettings v) => v.highContrast;
-  static const Field<VulpineSettings, bool> _f$highContrast =
-      Field('highContrast', _$highContrast, opt: true, def: false);
+  static const Field<VulpineSettings, bool> _f$highContrast = Field(
+    'highContrast',
+    _$highContrast,
+    opt: true,
+    def: false,
+  );
 
   @override
   final MappableFields<VulpineSettings> fields = const {
@@ -115,12 +139,13 @@ class VulpineSettingsMapper extends ClassMapperBase<VulpineSettings> {
 
   static VulpineSettings _instantiate(DecodingData data) {
     return VulpineSettings(
-        locale: data.dec(_f$locale),
-        themeMode: data.dec(_f$themeMode),
-        nativeTitleBar: data.dec(_f$nativeTitleBar),
-        design: data.dec(_f$design),
-        density: data.dec(_f$density),
-        highContrast: data.dec(_f$highContrast));
+      locale: data.dec(_f$locale),
+      themeMode: data.dec(_f$themeMode),
+      nativeTitleBar: data.dec(_f$nativeTitleBar),
+      design: data.dec(_f$design),
+      density: data.dec(_f$density),
+      highContrast: data.dec(_f$highContrast),
+    );
   }
 
   @override
@@ -142,30 +167,38 @@ mixin VulpineSettingsMappable {
   }
 
   Map<String, dynamic> toMap() {
-    return VulpineSettingsMapper.ensureInitialized()
-        .encodeMap<VulpineSettings>(this as VulpineSettings);
+    return VulpineSettingsMapper.ensureInitialized().encodeMap<VulpineSettings>(
+      this as VulpineSettings,
+    );
   }
 
   VulpineSettingsCopyWith<VulpineSettings, VulpineSettings, VulpineSettings>
-      get copyWith =>
-          _VulpineSettingsCopyWithImpl<VulpineSettings, VulpineSettings>(
-              this as VulpineSettings, $identity, $identity);
+  get copyWith =>
+      _VulpineSettingsCopyWithImpl<VulpineSettings, VulpineSettings>(
+        this as VulpineSettings,
+        $identity,
+        $identity,
+      );
   @override
   String toString() {
-    return VulpineSettingsMapper.ensureInitialized()
-        .stringifyValue(this as VulpineSettings);
+    return VulpineSettingsMapper.ensureInitialized().stringifyValue(
+      this as VulpineSettings,
+    );
   }
 
   @override
   bool operator ==(Object other) {
-    return VulpineSettingsMapper.ensureInitialized()
-        .equalsValue(this as VulpineSettings, other);
+    return VulpineSettingsMapper.ensureInitialized().equalsValue(
+      this as VulpineSettings,
+      other,
+    );
   }
 
   @override
   int get hashCode {
-    return VulpineSettingsMapper.ensureInitialized()
-        .hashValue(this as VulpineSettings);
+    return VulpineSettingsMapper.ensureInitialized().hashValue(
+      this as VulpineSettings,
+    );
   }
 }
 
@@ -177,15 +210,17 @@ extension VulpineSettingsValueCopy<$R, $Out>
 
 abstract class VulpineSettingsCopyWith<$R, $In extends VulpineSettings, $Out>
     implements ClassCopyWith<$R, $In, $Out> {
-  $R call(
-      {String? locale,
-      ThemeMode? themeMode,
-      bool? nativeTitleBar,
-      String? design,
-      ThemeDensity? density,
-      bool? highContrast});
+  $R call({
+    String? locale,
+    ThemeMode? themeMode,
+    bool? nativeTitleBar,
+    String? design,
+    ThemeDensity? density,
+    bool? highContrast,
+  });
   VulpineSettingsCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(
-      Then<$Out2, $R2> t);
+    Then<$Out2, $R2> t,
+  );
 }
 
 class _VulpineSettingsCopyWithImpl<$R, $Out>
@@ -197,32 +232,35 @@ class _VulpineSettingsCopyWithImpl<$R, $Out>
   late final ClassMapperBase<VulpineSettings> $mapper =
       VulpineSettingsMapper.ensureInitialized();
   @override
-  $R call(
-          {String? locale,
-          ThemeMode? themeMode,
-          bool? nativeTitleBar,
-          String? design,
-          ThemeDensity? density,
-          bool? highContrast}) =>
-      $apply(FieldCopyWithData({
-        if (locale != null) #locale: locale,
-        if (themeMode != null) #themeMode: themeMode,
-        if (nativeTitleBar != null) #nativeTitleBar: nativeTitleBar,
-        if (design != null) #design: design,
-        if (density != null) #density: density,
-        if (highContrast != null) #highContrast: highContrast
-      }));
+  $R call({
+    String? locale,
+    ThemeMode? themeMode,
+    bool? nativeTitleBar,
+    String? design,
+    ThemeDensity? density,
+    bool? highContrast,
+  }) => $apply(
+    FieldCopyWithData({
+      if (locale != null) #locale: locale,
+      if (themeMode != null) #themeMode: themeMode,
+      if (nativeTitleBar != null) #nativeTitleBar: nativeTitleBar,
+      if (design != null) #design: design,
+      if (density != null) #density: density,
+      if (highContrast != null) #highContrast: highContrast,
+    }),
+  );
   @override
   VulpineSettings $make(CopyWithData data) => VulpineSettings(
-      locale: data.get(#locale, or: $value.locale),
-      themeMode: data.get(#themeMode, or: $value.themeMode),
-      nativeTitleBar: data.get(#nativeTitleBar, or: $value.nativeTitleBar),
-      design: data.get(#design, or: $value.design),
-      density: data.get(#density, or: $value.density),
-      highContrast: data.get(#highContrast, or: $value.highContrast));
+    locale: data.get(#locale, or: $value.locale),
+    themeMode: data.get(#themeMode, or: $value.themeMode),
+    nativeTitleBar: data.get(#nativeTitleBar, or: $value.nativeTitleBar),
+    design: data.get(#design, or: $value.design),
+    density: data.get(#density, or: $value.density),
+    highContrast: data.get(#highContrast, or: $value.highContrast),
+  );
 
   @override
   VulpineSettingsCopyWith<$R2, VulpineSettings, $Out2> $chain<$R2, $Out2>(
-          Then<$Out2, $R2> t) =>
-      _VulpineSettingsCopyWithImpl<$R2, $Out2>($value, $cast, t);
+    Then<$Out2, $R2> t,
+  ) => _VulpineSettingsCopyWithImpl<$R2, $Out2>($value, $cast, t);
 }

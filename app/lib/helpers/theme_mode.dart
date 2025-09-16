@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:vulpine/src/generated/i18n/app_localizations.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:vulpine/src/generated/i18n/app_localizations.dart';
 
 extension ThemeModeHelper on ThemeMode {
   PhosphorIconData get icon {

@@ -131,10 +131,11 @@ class _HomePageState extends State<HomePage> {
 }
 
 class LayoutCard extends StatefulWidget {
-  final Widget child;
+  final Widget? child;
   final Color color;
+  final Widget? label;
 
-  const LayoutCard({super.key, required this.child, required this.color});
+  const LayoutCard({super.key, this.child, required this.color, this.label});
 
   @override
   State<LayoutCard> createState() => _LayoutCardState();
@@ -158,22 +159,21 @@ class _LayoutCardState extends State<LayoutCard> {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(8),
             color: widget.color,
-            border:
-                _hovered
-                    ? Border.all(
-                      color: ColorScheme.of(
-                        context,
-                      ).primary.withValues(alpha: 0.5),
-                      width: 6,
-                    )
-                    : _focused
-                    ? Border.all(
-                      color: ColorScheme.of(
-                        context,
-                      ).secondary.withValues(alpha: 0.5),
-                      width: 6,
-                    )
-                    : null,
+            border: _hovered
+                ? Border.all(
+                    color: ColorScheme.of(
+                      context,
+                    ).primary.withValues(alpha: 0.5),
+                    width: 6,
+                  )
+                : _focused
+                ? Border.all(
+                    color: ColorScheme.of(
+                      context,
+                    ).secondary.withValues(alpha: 0.5),
+                    width: 6,
+                  )
+                : null,
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withValues(alpha: 0.2),
@@ -183,7 +183,12 @@ class _LayoutCardState extends State<LayoutCard> {
             ],
           ),
           duration: const Duration(milliseconds: 300),
-          child: widget.child,
+          child: Stack(
+            children: [
+              ?widget.child,
+              Align(alignment: Alignment.bottomRight, child: widget.label),
+            ],
+          ),
         ),
         Material(
           type: MaterialType.transparency,

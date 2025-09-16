@@ -48,7 +48,7 @@ ThemeData getThemeData(
     );
   }
   return theme.copyWith(
-    tabBarTheme: const TabBarTheme(tabAlignment: TabAlignment.center),
+    tabBarTheme: const TabBarThemeData(tabAlignment: TabAlignment.center),
     dropdownMenuTheme: DropdownMenuThemeData(
       inputDecorationTheme: defaultDropdownInputDecorationTheme(),
     ),

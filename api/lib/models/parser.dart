@@ -152,7 +152,7 @@ class DslGrammarDefinition extends GrammarDefinition<VulpineDSL> {
         ref0(execCommand),
         ref0(argCommand),
         ref0(ifCommand),
-        failure<VulpineDSLCommand>('value expected'),
+        failure<VulpineDSLCommand>(message: 'value expected'),
       ].toChoiceParser();
 
   // SET command now uses ref0(interpolatedString)
@@ -231,7 +231,7 @@ class DslGrammarDefinition extends GrammarDefinition<VulpineDSL> {
       ref0(comparisonCondition),
       ref0(logicalCondition),
       ref0(notCondition),
-      failure<VulpineDSLCondition>('condition expected'),
+      failure<VulpineDSLCondition>(message: 'condition expected'),
     ].toChoiceParser(),
     char(')'),
   ).map3((_, condition, _) => condition);
